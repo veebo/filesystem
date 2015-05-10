@@ -1,3 +1,6 @@
+#include "FileIterator.h"
+#include "FileDescriptor.h"
+#include "FileSystem.h"
 void List(FileSystem *fs, int argc, char *argv[], ostream& out){
 //будет примерно так
   FileIterator* fi=fs->GetIterator();
