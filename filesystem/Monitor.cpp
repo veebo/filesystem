@@ -64,6 +64,8 @@ void Monitor::InitCommands(){
 
 	commands["stub"] = commands_ns::stub;
 	commands["Exit"] = commands_ns::Exit;
+	commands["list"] = commands_ns::List;
+	commands["lista"] = commands_ns::Lista;
 
 }
 
