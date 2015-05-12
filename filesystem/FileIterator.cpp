@@ -60,10 +60,16 @@ void FileIterator::Next(){
 bool FileIterator::HasNext(){
 	if (!fp->is_open())
 		throw "Iterator is closed";
-	size_t pos = fp->tellg();
-	fp->seekg(pos + (LINES_PER_FD - 2)*LINE_SIZE, fp->beg);
-	int next = atoi(FileSystem::read_line(fp));
-	fp->seekg(pos, fp->beg);
+
+	int next;
+	if (!current){
+		next = fs->get_first_file();
+	} else {
+		size_t pos = fp->tellg();
+		fp->seekg(pos + (LINES_PER_FD - 2)*LINE_SIZE, fp->beg);
+		next = atoi(FileSystem::read_line(fp));
+		fp->seekg(pos, fp->beg);
+	}
 	if (next != -1)
 		return true;
 	return false;
