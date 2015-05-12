@@ -29,7 +29,7 @@ void commands_ns::Exit(FileSystem *fs, int argc, char *argv[], std::ostream& out
 }
 void commands_ns::List(FileSystem *fs, int argc, char *argv[], std::ostream& out){
   FileIterator* fi=fs->GetIterator();
-  if(fi->HasNext()){
+  if(fs->GetFilesCount()!=0){
 	  out<<"Обнаруженные файлы:"<<std::endl;
   while(fi->HasNext()){
 	fi->Next();
@@ -46,7 +46,7 @@ void commands_ns::Lista(FileSystem *fs, int argc, char *argv[], std::ostream& ou
    FileIterator* fi=fs->GetIterator();
   int N=fs->GetFilesCount();
   char** spisok=new char*[N];
-  if(fi->HasNext()){
+  if(N!=0){
 	  out<<"Обнаруженные файлы:"<<std::endl;
 	int j=0;
  while(fi->HasNext()){
