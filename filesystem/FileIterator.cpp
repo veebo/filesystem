@@ -8,6 +8,7 @@ FileIterator::FileIterator(FileSystem* _fs, fstream* _fp){
 	fs = _fs;
 	fp = _fp;
 	next = fs->first_file;
+	current = NULL;
 
 	if (!fp->is_open())
 		return;
