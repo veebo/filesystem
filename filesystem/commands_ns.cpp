@@ -81,6 +81,7 @@ typedef struct tagMemList
 	FileDescriptor *FDescrPtr;
 	size_t offset;
 	size_t sz;
+	unsigned int index;
 } MemList;
 void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& out)
 {
@@ -107,13 +108,14 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 		List.push_back(ml);
 	}
 	//============================================*/
-	if (fs->GetFilesCount() <= 0) { out << "нет файлов" << std::endl; return; }//проверяем наличие файлов
+	if (fs->GetFilesCount() <= 0) { out << "no files" << std::endl; return; }//проверяем наличие файлов
 	//формируем список блоков из дескрипторов по возрастанию смещения======
 	std::list < MemList> List;
 	std::list<MemList>::iterator iter;
 	FileIterator *fi = fs->GetIterator();
 	FileDescriptor *fd;
 	MemList ml;
+	unsigned int indx = 0, max_indx;
 	do
 	{
 		fi->Next();
@@ -121,6 +123,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 		ml.FDescrPtr = fd;
 		ml.offset = fd->GetOffset();
 		ml.sz = fd->GetSize();
+		ml.index = indx;
 		if (List.empty())
 		{
 			List.push_back(ml);
@@ -140,8 +143,9 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 				List.push_back(ml);
 			}
 		}
+		++indx;
 	} while (fi->HasNext());
-	fi->Close();
+	max_indx = indx - 1;
 	//вставляем пустой блок в начало, если нужно
 	size_t FD_END = MAX_FILES_COUNT*LINES_PER_FD*LINE_SIZE + META_END;
 	if ((*(List.begin())).offset > FD_END)
@@ -266,7 +270,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 			}
 		}
 	}
-	//===================================================
+	//выводим список и записываем изменения в файл================
 	for (iter = List.begin(); iter != List.end(); iter++)
 	{
 		out << "offset: " << (*iter).offset << "; size: " << (*iter).sz << ((*iter).FDescrPtr ? "; file" : "; empty block");
@@ -274,14 +278,14 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 		out << std::endl;
 		(*iter).FDescrPtr->SetOffset((*iter).offset);//меняем смещение в дескрипторе
 	}
-	//записываем изменённые дескрипторы в файл
 	fi = fs->GetIterator();
-	do
+	for (indx = 0; indx <= max_indx; indx++)
 	{
+		for (iter = List.begin(); ( (iter != List.end()) && ((*iter).index != indx) ); iter++) {}
 		fi->Next();
-		fi->SetFileDescriptor(fi->GetFileDescriptor());
-	} while (fi->HasNext());
+		fi->SetFileDescriptor((*iter).FDescrPtr);
+	}
 	fi->Close();
-	////выводим результат
+	//выводим результат
 	out << "The whole data size after compressing: " << ( (*(std::prev(List.end()))).offset + (*(std::prev(List.end()))).sz - (*(List.begin())).offset) << std::endl;
 }
