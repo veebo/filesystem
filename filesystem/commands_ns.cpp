@@ -73,3 +73,32 @@ void commands_ns::Lista(FileSystem *fs, int argc, char *argv[], std::ostream& ou
   else 
 	  out<<"Файлов в системе не обнаружено."<< std::endl;
 }
+
+void commands_ns::DiskInfo(FileSystem *fs, int argc, char *argv[], std::ostream& out){	
+	// будем считать, что размеры файлов даны в kb
+	size_t totalUsedSpace = 0;
+	size_t fileSystemSize = fs->GetMaxSize();
+	FileIterator* fileIterator = fs->GetIterator();
+	
+	while(fileIterator->HasNext()){
+		fileIterator->Next();
+		FileDescriptor* fileDescriptor = fileIterator->GetFileDescriptor();
+		totalUsedSpace += fileDescriptor->GetSize();
+	}
+
+	size_t freeDiskSpace = fileSystemSize - totalUsedSpace;
+	double ratio = (double)freeDiskSpace/fileSystemSize; 
+	
+	/*
+	out << "Сведения о диске:" << std::endl;
+	out << "Наименование: " << fs->GetTomName() << std::endl;
+	out << "Размер свободного места: " << freeDiskSpace << " кб (" << ratio*100 << "%)" << std::endl;
+	out << "Максимальный объем: " << fileSystemSize << " кб" << std::endl;
+	*/
+
+	out << "Disk info:" << std::endl;
+	out << "Name: " << fs->GetTomName() << std::endl;
+	out << "Free disk space: " << freeDiskSpace << " kb (" << ratio*100 << "%)" << std::endl;
+	out << "Max size: " << fileSystemSize << " kb" << std::endl;
+}
+
