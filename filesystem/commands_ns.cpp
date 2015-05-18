@@ -30,48 +30,58 @@ void commands_ns::stub(FileSystem *fs, int argc, char *argv[], std::ostream& out
 void commands_ns::Exit(FileSystem *fs, int argc, char *argv[], std::ostream& out){
 	exit(0);
 }
+/*Модуль вывода оглавления в порядке, в котором файлы представлены в системе 
+Автор: Павлов Николай
+write in Microsoft  Visual Studio 2010*/
 void commands_ns::List(FileSystem *fs, int argc, char *argv[], std::ostream& out){
   FileIterator* fi=fs->GetIterator();
   if(fs->GetFilesCount()!=0){
 	  out<<"Обнаруженные файлы:"<<std::endl;
-  while(fi->HasNext()){
-	fi->Next();
-    FileDescriptor* fd=fi->GetFileDescriptor();
-	out<<'\t';
-    out<<fd->GetName()<< std::endl;
-  }
+	  while(fi->HasNext()){
+		 fi->Next();
+		 FileDescriptor* fd=fi->GetFileDescriptor();
+		 out<<'\t';
+		 out<<fd->GetName()<<"."<<fd->GetType()<<std::endl;
+	 }
   }
   else 
 	  out<<"Файлов в системе не обнаружено."<< std::endl;
 
 }
+/*Модуль вывода оглавления в алфавитном порядке
+Автор: Павлов Николай
+write in Microsoft  Visual Studio 2010*/
 void commands_ns::Lista(FileSystem *fs, int argc, char *argv[], std::ostream& out){
    FileIterator* fi=fs->GetIterator();
-  int N=fs->GetFilesCount();
-  char** spisok=new char*[N];
-  if(N!=0){
-	  out<<"Обнаруженные файлы:"<<std::endl;
-	int j=0;
- while(fi->HasNext()){
-	fi->Next();
-    FileDescriptor* fd=fi->GetFileDescriptor();
-	spisok[j]=fd->GetName();
-	j++;
-  }
-  char temp[20]; 
-  for (int i=1;i<N;i++){
-    for (int j=0;j<N-1;j++){
-        if (strcmp(spisok[i],spisok[j])<0){
-            strcpy(temp,spisok[i]);
-            strcpy(spisok[i],spisok[j]);
-            strcpy(spisok[j],temp);
-        }
-    }
-  }
-  for(int i=0;i<N;i++){
-	out<<'\t';
-	out<<spisok[i]<< std::endl;
-  }
+   int N=fs->GetFilesCount();
+   char** spisok=new char*[N];
+   if(N!=0){
+	   out<<"Обнаруженные файлы:"<<std::endl;
+	   int j=0;
+       while(fi->HasNext()){
+		   fi->Next();
+		   FileDescriptor* fd=fi->GetFileDescriptor();
+		   spisok[j]=strcat(fd->GetName(),".");
+		   spisok[j]=strcat(spisok[j],fd->GetType());
+	       j++;
+       }
+
+//алгоритм сортировки
+       char temp[40]; 
+       for (int i=1;i<N;i++){
+		   for (int j=0;j<N-1;j++){
+			   if (strcmp(spisok[i],spisok[j])<0){
+				   strcpy(temp,spisok[i]);
+				   strcpy(spisok[i],spisok[j]);
+				   strcpy(spisok[j],temp);
+               }
+           }
+       }
+//вывод построенного списка имен
+	   for(int i=0;i<N;i++){
+		   out<<'\t';
+	       out<<spisok[i]<< std::endl;
+       }
   }
   else 
 	  out<<"Файлов в системе не обнаружено."<< std::endl;
