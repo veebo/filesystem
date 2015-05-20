@@ -96,7 +96,7 @@ void Monitor::Execute(std::vector<char*>* argv_vector){
 		}
 		
 		commands[command_name](fs, argc, argv, io->GetOutput());
-		io->WriteLine("Command executed.");
+		//io->WriteLine("Command executed.");
 	} else {
 		char* mes = new char[strlen(command_name) + 22];
 		sprintf_s(mes, strlen(command_name) + 23, "Command not found: '%s'", command_name);
