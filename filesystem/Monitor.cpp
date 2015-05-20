@@ -90,6 +90,11 @@ void Monitor::Execute(std::vector<char*>* argv_vector){
 	int argc = argv_vector->size() - 1;
 	char** argv = new char*[argc];
 
+	int len = strlen(command_name);
+	for (int i = 0; i < len; ++i){
+		command_name[i] = tolower(command_name[i]);
+	}
+
 	if (commands.find(command_name) != commands.end()){
 		for (int i = 0; i < argc; ++i){
 			argv[i] = (argv_vector->at(i+1));
