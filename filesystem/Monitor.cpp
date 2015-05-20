@@ -12,34 +12,34 @@ using namespace std;
 
 Monitor::Monitor(InputOutput* _io){
 	if (!_io)
-		throw "Input/Output must be set";
+		throw "Input/Output не задан";
 	io = _io;
 	fstream* fp = new fstream(FILE_NAME, std::fstream::in | std::fstream::out);
 	
 	if (!fp->is_open()) {
 		char* str;
 
-		io->WriteLine("File System doesn't exist. Would you like to create it? [y/n]");
+		io->WriteLine("Файловая система не создана. Желаете создать новую? [y/n]");
 		while (!fp->is_open()){
 			str = io->ReadLine(" \t")->at(0);
 			if (strlen(str) > 0){
 				if (tolower(str[0]) == 'y'){
 					char *tom, *owner;
 					size_t maxsize;
-					io->WriteLine("Enter tom's name");
+					io->WriteLine("Введите название тома");
 					tom = io->ReadLine(NULL)->at(0);
-					io->WriteLine("Enter owners's name");
+					io->WriteLine("Введите имя владельца");
 					owner = io->ReadLine(NULL)->at(0);
-					io->WriteLine("Enter maximum size of filesystem (in Kb)");
+					io->WriteLine("Введите максимальный объем системы (в кБ)");
 					while (1) {
 						maxsize = atol(io->ReadLine(" \t")->at(0));
 						if (maxsize <= 0){
-							io->WriteLine("Value is incorrect. Try again");
+							io->WriteLine("Некорректный ввод. Попробуйте снова");
 						} else {
 							fp->close();
 							CreateFileSystem(FILE_NAME, tom, owner, maxsize);
 							InitCommands();
-							io->WriteLine("File System created. Enter your command");
+							io->WriteLine("Файловая система создана");
 							io->WriteLine("");
 							return;
 						}
@@ -47,7 +47,7 @@ Monitor::Monitor(InputOutput* _io){
 				} else if (tolower(str[0]) == 'n'){
 					exit(0);
 				} else{
-					io->GetOutput() << "Bad answer. Type 'y' or 'n'" << endl;
+					io->GetOutput() << "Некорректный ввод. Введите 'y' или 'n'" << endl;
 				}
 			}
 		}
@@ -56,7 +56,7 @@ Monitor::Monitor(InputOutput* _io){
 		fp->close();
 		fs = new FileSystem(FILE_NAME);
 		InitCommands();
-		io->WriteLine("File System loaded. Enter your command");
+		io->WriteLine("Файловая система загружена");
 	}
 }
 
@@ -82,9 +82,9 @@ void Monitor::CreateFileSystem(char* file_name, char* tom_name, char* owner_name
 
 void Monitor::Execute(std::vector<char*>* argv_vector){
 	if (!fs)
-		throw "File System doesn't exist";
+		throw "Файловая система не существует";
 	if (argv_vector == NULL || argv_vector->size() < 1)
-		throw "Missing command";
+		throw "Команда отсутствует";
 
 	char* command_name = argv_vector->at(0);
 	int argc = argv_vector->size() - 1;
@@ -104,7 +104,7 @@ void Monitor::Execute(std::vector<char*>* argv_vector){
 		//io->WriteLine("Command executed.");
 	} else {
 		char* mes = new char[strlen(command_name) + 22];
-		sprintf_s(mes, strlen(command_name) + 23, "Command not found: '%s'", command_name);
+		sprintf_s(mes, strlen(command_name) + 23, "Команда не найдена: '%s'", command_name);
 		io->WriteLine(mes);
 	}
 }
