@@ -28,6 +28,10 @@ void commands_ns::stub(FileSystem *fs, int argc, char *argv[], std::ostream& out
 }
 
 void commands_ns::Exit(FileSystem *fs, int argc, char *argv[], std::ostream& out){
+	if (argc!=0){
+		out<<"Неправильное количество параметров"<<std::endl;
+		return;
+	}
 	exit(0);
 }
 /*Модуль вывода оглавления в порядке, в котором файлы представлены в системе 
