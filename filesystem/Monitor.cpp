@@ -63,7 +63,7 @@ Monitor::Monitor(InputOutput* _io){
 void Monitor::InitCommands(){
 
 	commands["stub"] = commands_ns::stub;
-	commands["Exit"] = commands_ns::Exit;
+	commands["exit"] = commands_ns::Exit;
 	commands["list"] = commands_ns::List;
 	commands["lista"] = commands_ns::Lista;
 	commands["diskinfo"] = commands_ns::DiskInfo;
