@@ -33,6 +33,10 @@ void InputOutput::WriteLine(char *line){
 	out << line << endl;
 }
 
+void InputOutput::Invite(){
+	out << "filesys>> ";
+}
+
 void InputOutput::Parse(char* args, char* separators, vector<char*>* argv){
 	char *p, *next, *temp_val;
 	char buffer[255];
