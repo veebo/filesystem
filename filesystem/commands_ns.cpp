@@ -34,6 +34,10 @@ void commands_ns::Exit(FileSystem *fs, int argc, char *argv[], std::ostream& out
 Автор: Павлов Николай
 write in Microsoft  Visual Studio 2010*/
 void commands_ns::List(FileSystem *fs, int argc, char *argv[], std::ostream& out){
+  if(argc!=0) {
+  	out<<"Неправильное количество параметров"<<std::endl;
+	return;
+  }
   FileIterator* fi=fs->GetIterator();
   if(fs->GetFilesCount()!=0){
 	  out<<"Обнаруженные файлы:"<<std::endl;
@@ -52,6 +56,10 @@ void commands_ns::List(FileSystem *fs, int argc, char *argv[], std::ostream& out
 Автор: Павлов Николай
 write in Microsoft  Visual Studio 2010*/
 void commands_ns::Lista(FileSystem *fs, int argc, char *argv[], std::ostream& out){
+  if(argc!=0) {
+  	out<<"Неправильное количество параметров"<<std::endl;
+	return;
+  }
    FileIterator* fi=fs->GetIterator();
    int N=fs->GetFilesCount();
    char** spisok=new char*[N];
