@@ -78,7 +78,7 @@ void commands_ns::Lista(FileSystem *fs, int argc, char *argv[], std::ostream& ou
        char temp[40]; 
        for (int i=1;i<N;i++){
 		   for (int j=0;j<N-1;j++){
-			   if (strcmp(spisok[i],spisok[j])<0){
+			   if (strcmpi(spisok[i],spisok[j])<0){
 				   strcpy(temp,spisok[i]);
 				   strcpy(spisok[i],spisok[j]);
 				   strcpy(spisok[j],temp);
