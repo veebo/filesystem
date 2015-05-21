@@ -82,7 +82,7 @@ void commands_ns::Lista(FileSystem *fs, int argc, char *argv[], std::ostream& ou
        char temp[40]; 
        for (int i=1;i<N;i++){
 		   for (int j=0;j<N-1;j++){
-			   if (strcmpi(spisok[i],spisok[j])<0){
+			   if (_strcmpi(spisok[i],spisok[j])<0){
 				   strcpy(temp,spisok[i]);
 				   strcpy(spisok[i],spisok[j]);
 				   strcpy(spisok[j],temp);
@@ -100,7 +100,11 @@ void commands_ns::Lista(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 }
 
 void commands_ns::DiskInfo(FileSystem *fs, int argc, char *argv[], std::ostream& out){	
-	// будем считать, что размеры файлов даны в kb
+	if (argc != 0) {
+		out << "Неправильное количество параметров" << std::endl;
+		return;
+	}
+	//размеры файлов даны в байтах
 	size_t totalUsedSpace = 0;
 	size_t fileSystemSize = fs->GetMaxSize();
 	FileIterator* fileIterator = fs->GetIterator();
@@ -114,17 +118,11 @@ void commands_ns::DiskInfo(FileSystem *fs, int argc, char *argv[], std::ostream&
 	size_t freeDiskSpace = fileSystemSize - totalUsedSpace;
 	double ratio = (double)freeDiskSpace/fileSystemSize; 
 	
-	/*
 	out << "Сведения о диске:" << std::endl;
 	out << "Наименование: " << fs->GetTomName() << std::endl;
-	out << "Размер свободного места: " << freeDiskSpace << " кб (" << ratio*100 << "%)" << std::endl;
-	out << "Максимальный объем: " << fileSystemSize << " кб" << std::endl;
-	*/
+	out << "Размер свободного места: " << freeDiskSpace << " б (" << ratio*100 << "%)" << std::endl;
+	out << "Максимальный объем: " << fileSystemSize << " б" << std::endl;
 
-	out << "Disk info:" << std::endl;
-	out << "Name: " << fs->GetTomName() << std::endl;
-	out << "Free disk space: " << freeDiskSpace << " kb (" << ratio*100 << "%)" << std::endl;
-	out << "Max size: " << fileSystemSize << " kb" << std::endl;
 }
 
 typedef struct tagMemList
