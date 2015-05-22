@@ -134,7 +134,7 @@ void commands_ns::ChFsInfo(FileSystem *fs, int argc, char *argv[], std::ostream&
 	}
 	else
 	{
-		if (strlen(argv[0])>20 || strlen(argv[1])>20)
+		if (fs->names_types(argv[0]) || fs->names_types(argv[1]))
 		{
 			out << "Некорректные данные" << std::endl;
 			return;
