@@ -125,6 +125,65 @@ void commands_ns::DiskInfo(FileSystem *fs, int argc, char *argv[], std::ostream&
 
 }
 
+void commands_ns::ChFsInfo(FileSystem *fs, int argc, char *argv[], std::ostream& out)
+{
+	if (argc != 2)
+	{
+		out << "Неверное количество параметров"<< std::endl;
+		return;
+	}
+	else
+	{
+		if (strlen(argv[0])>20 || strlen(argv[1])>20)
+		{
+			out << "Некорректные данные" << std::endl;
+			return;
+		}
+		else
+		{
+			fs->SetTomName(argv[0]);
+			fs->SetOwner(argv[1]);
+			out << "Mетка тома и имя владельца успешно изменены\n"
+				<< "Текущая метка тома:    " << fs->GetTomName() <<std::endl 
+				<< "Текущее имя владельца: " << fs->GetOwner()
+				<< std::endl;
+		}
+	}
+}
+
+void  commands_ns::Format(FileSystem *fs, int argc, char *argv[], std::ostream& out) // модуль не доработан жду модуля Delete()
+{
+	if (argc != 3)
+	{
+		out << "Неверное количество параметров"<< std::endl;
+		return;
+	}
+	else
+	{
+		//size_t szt = atoi(argv[2]);
+		
+		if (fs->names_types(argv[0]) || fs->names_types(argv[1]) || fs->fssize(argv[2]))
+		{
+			out << "Некорректные данные" << std::endl;
+			return;
+		}
+		else
+		{
+			FileIterator *fIter = fs->GetIterator();
+			fs->SetTomName(argv[0]);
+			fs->SetOwner(argv[1]);
+			fs->SetMaxSize(atoi(argv[2]));
+			while (fIter->HasNext())
+			{
+				fIter->Next();
+				//fIter->Delete();
+			}
+			fIter->Close();
+			out << "Форматирование ФС успешно" << std::endl;
+		}
+	}
+}
+
 typedef struct tagMemList
 {
 	FileDescriptor *FDescrPtr;
