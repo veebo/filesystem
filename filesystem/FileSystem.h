@@ -7,9 +7,9 @@ public:
 	FileSystem(char* file_name);
 	FileSystem(char* file_name, char* _tomName, char* _owner, size_t _maxSize);
 	~FileSystem();
-	void Compress(); //Сжатие файловой системы
-	void CreateFile(FileDescriptor* fd); //Создание файла
-	FileIterator* GetIterator(); //Получение экземпляра итератора
+	void Compress(); //Г‘Г¦Г ГІГЁГҐ ГґГ Г©Г«Г®ГўГ®Г© Г±ГЁГ±ГІГҐГ¬Г»
+	void CreateFile(FileDescriptor* fd); //Г‘Г®Г§Г¤Г Г­ГЁГҐ ГґГ Г©Г«Г 
+	FileIterator* GetIterator(); //ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ ГЅГЄГ§ГҐГ¬ГЇГ«ГїГ°Г  ГЁГІГҐГ°Г ГІГ®Г°Г 
 	size_t GetMaxSize();
 	char *GetOwner();
 	char *GetTomName();
@@ -17,21 +17,23 @@ public:
 	void SetMaxSize(size_t _maxSize);
 	void SetOwner(char* _owner);
 	void SetTomName(char* _tomName);
+	bool fssize(char *);
+	bool names_types(char *);
 
 
 private:
-	char* fileName; //Имя файла, в котором хранится инфа (fs.txt по-умолчанию)
-	char* tomName; //Название раздела
-	char* owner; //Имя владельца
-	size_t maxSize; //Максимальный размер системы
-	size_t filesCount; //Колличество файлов
-	int first_file; //Индекс первого файла
-	std::fstream* fp; //Указатель на файловый поток для fs.txt
+	char* fileName; //Г€Г¬Гї ГґГ Г©Г«Г , Гў ГЄГ®ГІГ®Г°Г®Г¬ ГµГ°Г Г­ГЁГІГ±Гї ГЁГ­ГґГ  (fs.txt ГЇГ®-ГіГ¬Г®Г«Г·Г Г­ГЁГѕ)
+	char* tomName; //ГЌГ Г§ГўГ Г­ГЁГҐ Г°Г Г§Г¤ГҐГ«Г 
+	char* owner; //Г€Г¬Гї ГўГ«Г Г¤ГҐГ«ГјГ¶Г 
+	size_t maxSize; //ГЊГ ГЄГ±ГЁГ¬Г Г«ГјГ­Г»Г© Г°Г Г§Г¬ГҐГ° Г±ГЁГ±ГІГҐГ¬Г»
+	size_t filesCount; //ГЉГ®Г«Г«ГЁГ·ГҐГ±ГІГўГ® ГґГ Г©Г«Г®Гў
+	int first_file; //Г€Г­Г¤ГҐГЄГ± ГЇГҐГ°ГўГ®ГЈГ® ГґГ Г©Г«Г 
+	std::fstream* fp; //Г“ГЄГ Г§Г ГІГҐГ«Гј Г­Г  ГґГ Г©Г«Г®ГўГ»Г© ГЇГ®ГІГ®ГЄ Г¤Г«Гї fs.txt
 	void set_first_file(int _first_file);
 	size_t get_first_file();
 	void set_filesCount(size_t _filesCount);
 
-	// Статические функции для записи-чтения строк. Используются этим классом и FileIterator.
+	// Г‘ГІГ ГІГЁГ·ГҐГ±ГЄГЁГҐ ГґГіГ­ГЄГ¶ГЁГЁ Г¤Г«Гї Г§Г ГЇГЁГ±ГЁ-Г·ГІГҐГ­ГЁГї Г±ГІГ°Г®ГЄ. Г€Г±ГЇГ®Г«ГјГ§ГіГѕГІГ±Гї ГЅГІГЁГ¬ ГЄГ«Г Г±Г±Г®Г¬ ГЁ FileIterator.
 	static void write_line(std::fstream * fp, char *data, size_t len); 
 	static void write_line(std::fstream * fp, size_t data);
 	static void write_line(std::fstream * fp, int data);
