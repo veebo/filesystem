@@ -33,11 +33,15 @@ void InputOutput::WriteLine(char *line){
 	out << line << endl;
 }
 
+void InputOutput::Invite(){
+	out << "filesys>> ";
+}
+
 void InputOutput::Parse(char* args, char* separators, vector<char*>* argv){
 	char *p, *next, *temp_val;
 	char buffer[255];
 	if (strlen(args) > 255){
-		throw "Too long input string";
+		throw "Превышено допустимое колличество символов";
 	}
 	strcpy_s(buffer, args);
 	if (!separators){

@@ -9,7 +9,7 @@ FileSystem::FileSystem(char* file_name) {
 	fileName = file_name;
 	fp = new fstream(file_name, std::fstream::in | std::fstream::out);
 	if (!fp->is_open())
-		throw "File doesn't exist";
+		throw "Файловая система не существует";
 	first_file = -1;
 
 	GetTomName();
@@ -63,7 +63,7 @@ void FileSystem::CreateFile(FileDescriptor* fd){
 
 	GetFilesCount();
 	if (filesCount == MAX_FILES_COUNT)
-		throw "Too many files";
+		throw "Превышено максимальное колличество файлов";
 
 	while (buzy == 1) {
 		fp->seekg(META_END + (index++)*LINES_PER_FD*LINE_SIZE, fp->beg);
@@ -137,7 +137,7 @@ size_t FileSystem::GetFilesCount(){
 	fp->seekp(3 * LINE_SIZE, fp->beg);
 	filesCount = atol(read_line(fp));
 	if (filesCount > MAX_FILES_COUNT)
-		throw "Invalid value of file count in system";
+		throw "Некорректное колличество файлов в системе";
 	return filesCount;
 }
 

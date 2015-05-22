@@ -12,61 +12,87 @@ using namespace std;
 
 Monitor::Monitor(InputOutput* _io){
 	if (!_io)
-		throw "Input/Output must be set";
+		throw "Input/Output íå çàäàí";
 	io = _io;
 	fstream* fp = new fstream(FILE_NAME, std::fstream::in | std::fstream::out);
 	
 	if (!fp->is_open()) {
-		char* str;
-
-		io->WriteLine("File System doesn't exist. Would you like to create it? [y/n]");
 		while (!fp->is_open()){
-			str = io->ReadLine(" \t")->at(0);
-			if (strlen(str) > 0){
-				if (tolower(str[0]) == 'y'){
-					char *tom, *owner;
+					char *tom, *owner,*maxfssize;
 					size_t maxsize;
-					io->WriteLine("Enter tom's name");
-					tom = io->ReadLine(NULL)->at(0);
-					io->WriteLine("Enter owners's name");
-					owner = io->ReadLine(NULL)->at(0);
-					io->WriteLine("Enter maximum size of filesystem (in Kb)");
-					while (1) {
-						maxsize = atol(io->ReadLine(" \t")->at(0));
-						if (maxsize <= 0){
-							io->WriteLine("Value is incorrect. Try again");
-						} else {
-							fp->close();
-							CreateFileSystem(FILE_NAME, tom, owner, maxsize);
-							InitCommands();
-							io->WriteLine("File System created. Enter your command");
-							io->WriteLine("");
-							return;
+					bool flag;
+					io->WriteLine("Введите название тома и нажмите клавишу ENTER");
+					//Должна быть циклическая проверка тома
+					do{
+						flag=false;
+						tom = io->ReadLine(NULL)->at(0);
+						if (strlen(tom)>20) flag=true;
+						if (flag) io->WriteLine("Введены некорректные данные");
+					}while (flag);
+					io->WriteLine("Введите имя владельца и нажмите клавишу ENTER");
+					//Должна быть циклическая проверка владельца
+					do{
+						flag=false;
+						owner = io->ReadLine(NULL)->at(0);
+						if (strlen(owner)>20) flag=true;
+						if (flag) io->WriteLine("Введены некорректные данные");
+					}while (flag);
+					io->WriteLine("Введите максимальный объем и нажмите клавишу ENTER");
+					
+					do{
+						flag=false;
+						maxfssize = io->ReadLine(NULL)->at(0);
+						for (int i=0;i<strlen(maxfssize);++i)
+						{
+							if ((unsigned int)(maxfssize[i])<48||(unsigned int)(maxfssize[i])>57)
+							{
+								flag=true;
+								break;
+							}
 						}
-					}
-				} else if (tolower(str[0]) == 'n'){
-					exit(0);
-				} else{
-					io->GetOutput() << "Bad answer. Type 'y' or 'n'" << endl;
-				}
-			}
+						if (!flag){
+							if ((maxfssize[0]=='-')||(strlen(maxfssize) > 10))
+								{
+									flag=true;
+								}
+								else if (strlen(maxfssize) == 10){
+										//2147483647
+										char MAX_FS_SIZE[]={'2','1','4','7','4','8','3','6','4','7'};
+										for (int i=0;i<10;++i)
+											{
+												if (maxfssize[i]>MAX_FS_SIZE[i]){
+												flag=true;
+												break;
+												}else if (maxfssize[i]<MAX_FS_SIZE[i]) break;
+											}
+								}else if (atol(maxfssize)==0) flag=true;
+						}
+						if (flag) io->WriteLine("Введены некорректные данные"); else maxsize=atol(maxfssize);
+					}while (flag);
+					fp->close();
+					CreateFileSystem(FILE_NAME, tom, owner, maxsize);
+					InitCommands();
+					io->WriteLine("Файловая система создана");
+					io->WriteLine("");
+					return;
 		}
 	}
 	else {
 		fp->close();
 		fs = new FileSystem(FILE_NAME);
 		InitCommands();
-		io->WriteLine("File System loaded. Enter your command");
+		io->WriteLine("Файловая система загружена");
 	}
 }
 
 void Monitor::InitCommands(){
 
 	commands["stub"] = commands_ns::stub;
-	commands["Exit"] = commands_ns::Exit;
+	commands["exit"] = commands_ns::Exit;
 	commands["list"] = commands_ns::List;
 	commands["lista"] = commands_ns::Lista;
-	commands["compress"] = commands_ns::Cmprs;
+	commands["diskinfo"] = commands_ns::DiskInfo;
+	commands["cmprs"] = commands_ns::Cmprs;
 }
 
 Monitor::~Monitor(){
@@ -82,13 +108,18 @@ void Monitor::CreateFileSystem(char* file_name, char* tom_name, char* owner_name
 
 void Monitor::Execute(std::vector<char*>* argv_vector){
 	if (!fs)
-		throw "File System doesn't exist";
+		throw "Файловая система не существует";
 	if (argv_vector == NULL || argv_vector->size() < 1)
-		throw "Missing command";
+		throw "Ожидается команда";
 
 	char* command_name = argv_vector->at(0);
 	int argc = argv_vector->size() - 1;
 	char** argv = new char*[argc];
+
+	int len = strlen(command_name);
+	for (int i = 0; i < len; ++i){
+		command_name[i] = tolower(command_name[i]);
+	}
 
 	if (commands.find(command_name) != commands.end()){
 		for (int i = 0; i < argc; ++i){
@@ -96,11 +127,12 @@ void Monitor::Execute(std::vector<char*>* argv_vector){
 		}
 		
 		commands[command_name](fs, argc, argv, io->GetOutput());
-		io->WriteLine("Command executed.");
+		//io->WriteLine("Command executed.");
 	} else {
-		char* mes = new char[strlen(command_name) + 22];
-		sprintf_s(mes, strlen(command_name) + 23, "Command not found: '%s'", command_name);
-		io->WriteLine(mes);
+		//char* mes = new char[strlen(command_name) + 22];
+		//sprintf_s(mes, strlen(command_name) + 23, "Êîìàíäà íå íàéäåíà: '%s'", command_name);
+		//io->WriteLine(mes);
+		io->WriteLine("Не удалось распознать команду");
 	}
 }
 

@@ -9,10 +9,11 @@ public:
 	~InputOutput();
 	std::istream& GetInput();
 	std::ostream& GetOutput();
-	std::vector<char*>* ReadLine(char* separators); //Читает строку, и разбивает её на подстроки(по указанным разделителям)
-	void InputOutput::WriteLine(char *line); //Пишет строку
-	void InputOutput::Parse(char* args, char* separators, std::vector<char*>* argv); //Разбивает строку на подстроки(по указанным разделителям)
-																					 //и кладет подстроки в вектор
+	std::vector<char*>* ReadLine(char* separators); //Г—ГЁГІГ ГҐГІ Г±ГІГ°Г®ГЄГі, ГЁ Г°Г Г§ГЎГЁГўГ ГҐГІ ГҐВё Г­Г  ГЇГ®Г¤Г±ГІГ°Г®ГЄГЁ(ГЇГ® ГіГЄГ Г§Г Г­Г­Г»Г¬ Г°Г Г§Г¤ГҐГ«ГЁГІГҐГ«ГїГ¬)
+	void InputOutput::WriteLine(char *line); //ГЏГЁГёГҐГІ Г±ГІГ°Г®ГЄГі
+	void InputOutput::Invite();
+	void InputOutput::Parse(char* args, char* separators, std::vector<char*>* argv); //ГђГ Г§ГЎГЁГўГ ГҐГІ Г±ГІГ°Г®ГЄГі Г­Г  ГЇГ®Г¤Г±ГІГ°Г®ГЄГЁ(ГЇГ® ГіГЄГ Г§Г Г­Г­Г»Г¬ Г°Г Г§Г¤ГҐГ«ГЁГІГҐГ«ГїГ¬)
+																					 //ГЁ ГЄГ«Г Г¤ГҐГІ ГЇГ®Г¤Г±ГІГ°Г®ГЄГЁ Гў ГўГҐГЄГІГ®Г°
 
 private:
 	std::istream& in;
