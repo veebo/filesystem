@@ -2,32 +2,8 @@
 #include "commands_ns.h"
 #include "const.h"
 #include <list>
+#include <algorithm>
 
-
-
-void commands_ns::stub(FileSystem *fs, int argc, char *argv[], std::ostream& out){
-	out << "Name of tom: " << fs->GetTomName() << std::endl;
-	out << "Owner's name: " << fs->GetOwner() << std::endl;
-	out << "Max size: " << fs->GetMaxSize() << std::endl;
-	out << "File's count: " << fs->GetFilesCount() << std::endl;
-	out << "Arguments of this command: ";
-	for (int i = 0; i < argc; ++i){
-		out << argv[i];
-		if (i != argc - 1)
-			out << ", ";
-	}
-	out << std::endl;
-	out << "File names: " << std::endl;
-
-	FileIterator *iter = fs->GetIterator();
-	FileDescriptor* fd;
-	while (iter->HasNext()){
-		iter->Next();
-		fd = iter->GetFileDescriptor();
-		out << fd->GetName() << std::endl;
-		delete fd;
-	}
-}
 
 void commands_ns::Exit(FileSystem *fs, int argc, char *argv[], std::ostream& out){
 	if (argc!=0){
@@ -36,6 +12,7 @@ void commands_ns::Exit(FileSystem *fs, int argc, char *argv[], std::ostream& out
 	}
 	exit(0);
 }
+
 /*Модуль вывода оглавления в порядке, в котором файлы представлены в системе 
 Автор: Павлов Николай
 write in Microsoft  Visual Studio 2010*/
@@ -672,7 +649,7 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 			fi->Next();
 			FileDescriptor* fd = fi->GetFileDescriptor();
 
-			size = (size + fd->GetSize);
+			size = (size + fd->GetSize());
 
 		};
 
@@ -701,7 +678,7 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 			{
 				FileIterator* cur = fi;
 
-				if (fd->GetSize != 0)
+				if (fd->GetSize() != 0)
 				{
 					int j = 0;
 					int jmin = 0;
@@ -709,8 +686,8 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 
 					std::vector<int> space;
 
-					space.push_back(START);
-					space.push_back(END);
+					space.push_back(START_OF_FILE_SPACE);
+					space.push_back(fs->GetMaxSize());
 
 					FileIterator* iter = fs->GetIterator();
 					FileDescriptor* fd;
@@ -748,7 +725,7 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 							if (*it - prevOffset >= size){
 
 								destoffset = prevOffset;
-								fd = cur->GetFileDescriptor;
+								fd = cur->GetFileDescriptor();
 								fd->SetSize(strlen(argv[1]));
 								fd->SetOffset(destoffset);
 								cur->SetFileDescriptor(fd);

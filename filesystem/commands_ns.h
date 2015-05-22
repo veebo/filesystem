@@ -4,9 +4,6 @@
 // Òóò ôóíêöèè, âûïîëíÿåìûå íåïîñðåäñòâåííî ÷åðåç ìîíèòîð êîìàíä
 namespace commands_ns {
 
-	//Âðåìåííàÿ çàãëóøêà, êîòîðàÿ âûâîäèò èíôîðìàöèþ î ñèñòåìå è ñïèñîê ôàéëîâ
-	void stub(FileSystem *fs, int argc, char *argv[], std::ostream& out);
-
 	//Ôóíêöèÿ äëÿ âûõîäà èç ïðîãàììû, êîòîðóþ, íóæíî âïèñàòü â ÒÇ.
 	void Exit(FileSystem *fs, int argc, char *argv[], std::ostream& out);
 

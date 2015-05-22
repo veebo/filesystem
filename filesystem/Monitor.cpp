@@ -110,8 +110,6 @@ Monitor::Monitor(InputOutput* _io){
 }
 
 void Monitor::InitCommands(){
-
-	commands["stub"] = commands_ns::stub;
 	
 	commands["exit"] = commands_ns::Exit;
 	commands["list"] = commands_ns::List;
