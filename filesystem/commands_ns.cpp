@@ -143,10 +143,9 @@ void commands_ns::ChFsInfo(FileSystem *fs, int argc, char *argv[], std::ostream&
 		{
 			fs->SetTomName(argv[0]);
 			fs->SetOwner(argv[1]);
-			out << "Mетка тома и имя владельца успешно изменены\n"
-				<< "Текущая метка тома:    " << fs->GetTomName() <<std::endl 
-				<< "Текущее имя владельца: " << fs->GetOwner()
-				<< std::endl;
+			out << "Текущая метка тома:    " << fs->GetTomName() <<std::endl 
+				<< "Текущее имя владельца: " << fs->GetOwner() << std::endl
+				<< "Изменение информации о ФС успешно" << std::endl;
 		}
 	}
 }
