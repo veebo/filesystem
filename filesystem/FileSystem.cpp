@@ -9,7 +9,7 @@ FileSystem::FileSystem(char* file_name) {
 	fileName = file_name;
 	fp = new fstream(file_name, std::fstream::in | std::fstream::out);
 	if (!fp->is_open())
-		throw "Файловая система не существует";
+		throw "Г”Г Г©Г«Г®ГўГ Гї Г±ГЁГ±ГІГҐГ¬Г  Г­ГҐ Г±ГіГ№ГҐГ±ГІГўГіГҐГІ";
 	first_file = -1;
 
 	GetTomName();
@@ -51,9 +51,9 @@ void FileSystem::Compress(){
 
 
 void FileSystem::CreateFile(FileDescriptor* fd){
-	// Эту функция практически написана, т.к. она нужна мне была в ходе работы.
-	// Сюда нужно дописать проверку, не станет ли объем системы после добавления файла
-	// превышать максимальное допустимое значение, возможно ещё что-то.
+	// ГќГІГі ГґГіГ­ГЄГ¶ГЁГї ГЇГ°Г ГЄГІГЁГ·ГҐГ±ГЄГЁ Г­Г ГЇГЁГ±Г Г­Г , ГІ.ГЄ. Г®Г­Г  Г­ГіГ¦Г­Г  Г¬Г­ГҐ ГЎГ»Г«Г  Гў ГµГ®Г¤ГҐ Г°Г ГЎГ®ГІГ».
+	// Г‘ГѕГ¤Г  Г­ГіГ¦Г­Г® Г¤Г®ГЇГЁГ±Г ГІГј ГЇГ°Г®ГўГҐГ°ГЄГі, Г­ГҐ Г±ГІГ Г­ГҐГІ Г«ГЁ Г®ГЎГєГҐГ¬ Г±ГЁГ±ГІГҐГ¬Г» ГЇГ®Г±Г«ГҐ Г¤Г®ГЎГ ГўГ«ГҐГ­ГЁГї ГґГ Г©Г«Г 
+	// ГЇГ°ГҐГўГ»ГёГ ГІГј Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­Г®ГҐ Г¤Г®ГЇГіГ±ГІГЁГ¬Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ, ГўГ®Г§Г¬Г®Г¦Г­Г® ГҐГ№Вё Г·ГІГ®-ГІГ®.
 
 	char* type;
 	bool buzy = true;
@@ -63,7 +63,7 @@ void FileSystem::CreateFile(FileDescriptor* fd){
 
 	GetFilesCount();
 	if (filesCount == MAX_FILES_COUNT)
-		throw "Превышено максимальное колличество файлов";
+		throw "ГЏГ°ГҐГўГ»ГёГҐГ­Г® Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­Г®ГҐ ГЄГ®Г«Г«ГЁГ·ГҐГ±ГІГўГ® ГґГ Г©Г«Г®Гў";
 
 	while (buzy == 1) {
 		fp->seekg(META_END + (index++)*LINES_PER_FD*LINE_SIZE, fp->beg);
@@ -137,7 +137,7 @@ size_t FileSystem::GetFilesCount(){
 	fp->seekp(3 * LINE_SIZE, fp->beg);
 	filesCount = atol(read_line(fp));
 	if (filesCount > MAX_FILES_COUNT)
-		throw "Некорректное колличество файлов в системе";
+		throw "ГЌГҐГЄГ®Г°Г°ГҐГЄГІГ­Г®ГҐ ГЄГ®Г«Г«ГЁГ·ГҐГ±ГІГўГ® ГґГ Г©Г«Г®Гў Гў Г±ГЁГ±ГІГҐГ¬ГҐ";
 	return filesCount;
 }
 
@@ -178,7 +178,7 @@ void FileSystem::set_first_file(int _first_file){
 }
 
 
-//Если в качестве data передать NULL,  то строка заплняется пробелами
+//Г…Г±Г«ГЁ Гў ГЄГ Г·ГҐГ±ГІГўГҐ data ГЇГҐГ°ГҐГ¤Г ГІГј NULL,  ГІГ® Г±ГІГ°Г®ГЄГ  Г§Г ГЇГ«Г­ГїГҐГІГ±Гї ГЇГ°Г®ГЎГҐГ«Г Г¬ГЁ
 
 void FileSystem::write_line(fstream* fp, char *data, size_t len){
 	char* spaces;
@@ -223,4 +223,53 @@ char* FileSystem::read_line(fstream* fp){
 	buf = new char[end - beg + 2];
 	strcpy_s(buf, end - beg + 2, beg);
 	return buf;
+}
+
+bool FileSystem::fssize(char *maxfssize)
+{
+	bool flag=false;
+	for (int i=0;i<strlen(maxfssize);++i)
+			{
+				if ((unsigned int)(maxfssize[i])<48||(unsigned int)(maxfssize[i])>57)
+					{
+						flag=true;
+						break;
+					}
+			}
+		if (!flag){
+			if ((maxfssize[0]=='-')||(strlen(maxfssize) > 10))
+				{
+					flag=true;
+				}
+			else if (strlen(maxfssize) == 10){
+					//2147483647
+					char MAX_FS_SIZE[]={'2','1','4','7','4','8','3','6','4','7'};
+					for (int i=0;i<10;++i)
+						{
+							if (maxfssize[i]>MAX_FS_SIZE[i]){
+							flag=true;
+							break;
+							}else if (maxfssize[i]<MAX_FS_SIZE[i]) break;
+						}
+			}else if (atol(maxfssize)==0) flag=true;
+		}
+	return flag;
+}
+
+bool FileSystem::names_types(char *str){
+	bool flag = false;
+	if (strlen(str) > 20 || strlen(str) <= 0){
+		flag =true;
+	}else
+	{
+		for (int i = 0;i<strlen(str);++i)
+		{
+			int k = (int)str[i];
+			if (k<48 || k>122 ||(k>57 && k<65)||(k>90 && k<97)){
+				flag = true;
+				break;
+			}
+		}
+	}
+	return flag;
 }
