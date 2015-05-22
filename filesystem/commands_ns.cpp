@@ -85,29 +85,7 @@ typedef struct tagMemList
 } MemList;
 void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& out)
 {
-	/*/тестовая последовательность блоков==============
-	FileDescriptor fd;
-	fd.SetName("fd_name");
-	fd.SetType("fd_type");
-	MemList ml;
-	std::list < MemList> List;
-	std::list<MemList>::iterator iter;
-	size_t prevOffst = 0;
-	size_t prevSz = 0;
-	FileDescriptor *prevFD = &fd;
-	srand(10);
-	for (int i = 0; i < 15; i++)
-	{
-		int r = (prevFD)?(rand() % 2):1;
-		ml.FDescrPtr = (r == 1) ? &fd : NULL;
-		prevFD = ml.FDescrPtr;
-		ml.offset = prevOffst + prevSz;
-		prevSz = 1 + (rand() % 25);
-		ml.sz = prevSz;
-		prevOffst = ml.offset;
-		List.push_back(ml);
-	}
-	//============================================*/
+	if (argc > 0) { out << "This command must be used without argumnents" << std::endl; return; }
 	if (fs->GetFilesCount() <= 0) { out << "no files" << std::endl; return; }//проверяем наличие файлов
 	//формируем список блоков из дескрипторов по возрастанию смещения======
 	std::list < MemList> List;
@@ -171,12 +149,6 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 		}
 	}
 	//=========================================================*/
-	for (iter = List.begin(); iter != List.end(); iter++)
-	{
-		out << "offset: " << (*iter).offset << "; size: " << (*iter).sz << ((*iter).FDescrPtr ? "; file" : "; empty block");
-		if ((*iter).FDescrPtr) { out << ", name: " << (*iter).FDescrPtr->GetName(); }
-		out << std::endl;
-	}
 	out << "The whole data size before compressing: " << ( (*(std::prev(List.end()))).offset + (*(std::prev(List.end()))).sz - (*(List.begin())).offset) << std::endl;
 	//сжатие===================================================
 	for (iter = List.begin(); iter != List.end(); iter++)
@@ -271,13 +243,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 		}
 	}
 	//выводим список и записываем изменения в файл================
-	for (iter = List.begin(); iter != List.end(); iter++)
-	{
-		out << "offset: " << (*iter).offset << "; size: " << (*iter).sz << ((*iter).FDescrPtr ? "; file" : "; empty block");
-		if ((*iter).FDescrPtr) { out << ", name: " << (*iter).FDescrPtr->GetName(); }
-		out << std::endl;
-		(*iter).FDescrPtr->SetOffset((*iter).offset);//меняем смещение в дескрипторе
-	}
+	for (iter = List.begin(); iter != List.end(); iter++) { (*iter).FDescrPtr->SetOffset((*iter).offset); }//меняем смещение в дескрипторах
 	fi = fs->GetIterator();
 	for (indx = 0; indx <= max_indx; indx++)
 	{
