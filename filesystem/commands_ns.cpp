@@ -3,6 +3,8 @@
 #include "const.h"
 #include <list>
 
+
+
 void commands_ns::stub(FileSystem *fs, int argc, char *argv[], std::ostream& out){
 	out << "Name of tom: " << fs->GetTomName() << std::endl;
 	out << "Owner's name: " << fs->GetOwner() << std::endl;
@@ -362,3 +364,118 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 	//выводим результат
 	out << "The whole data size after compressing: " << ( (*(std::prev(List.end()))).offset + (*(std::prev(List.end()))).sz - (*(List.begin())).offset) << std::endl;
 }
+
+void commands_ns::MkFile(FileSystem *fs, int argc, char *argv[], std::ostream& out)
+{
+	if (argc != 1)
+	{
+		out << "Неверное количество параметров."<< std::endl;
+		return;
+	}
+	if (strlen(argv[0]) > 10)
+	{
+		out << "Некорректные данные." << std::endl;
+		return;
+	};
+	char *nt[2];
+	nt[0] = strtok(argv[0], ".");
+	nt[1] = strtok(NULL, " ,.-");
+	if (fs->names_types(nt[0]) == 1)
+	{
+		out << "Некорректные данные."<< std::endl;
+		return;
+	}
+	FileDescriptor* fd = new FileDescriptor();
+	fd->SetName(nt[0]);
+	fd->SetType(nt[1]);
+	fs->CreateFile(fd);
+}
+
+void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& out)
+
+{
+	if (argc != 1)
+	{
+		out << "Неверное количество параметров." << std::endl;
+		return;
+	}
+	if (strlen(argv[0]) > 10)
+	{
+		out << "Некорректные данные." << std::endl;
+		return;
+	};
+	char *nt[2];
+	nt[0] = strtok(argv[0], ".");
+	nt[1] = strtok(NULL, " ,.-");
+	if (fs->names_types(nt[0]) == 1)
+	{
+		out << "Некорректные данные." << std::endl;
+		return;
+	}
+	FileIterator* fi = fs->GetIterator();
+	FileIterator* prevfi;
+	int j = 0;
+	if (fs->GetFilesCount() != 0)
+	{
+		while (fi->HasNext())
+		{
+			
+			FileDescriptor* fd = fi->GetFileDescriptor();
+			if (strcmp(fd->GetName(), nt[0]) == 0
+				&& strcmp(fd->GetType(), nt[1]) == 0)
+			{
+				if (prevfi == NULL)
+				{
+					fs->set_first_file(1);
+					fi->Delete();
+					return;
+				}
+				prevfi->set_next(j+1);
+
+			}
+			prevfi = fi;
+			fi->Next();	
+			j++;
+		}
+	}
+	else
+		out << "Файлов в системе не обнаружено." << std::endl;
+
+}
+
+//void AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream& out)
+//{
+//	if (argc != 2)
+//	{
+//		out << "Неверное количество параметров." << std::endl;
+//		return;
+//	}
+//	char *nt[2];
+//	nt[0] = strtok(argv[0], ".");
+//	nt[1] = strtok(NULL, " ,.-");
+//	if (fs->names_types(nt[0]) == 1)
+//	{
+//		out << "Некорректные данные." << std::endl;
+//		return;
+//	}
+//	FileIterator* fi = fs->GetIterator();
+//	int N = fs->GetFilesCount();
+//	if (N != 0)
+//	{
+//		while (fi->HasNext())
+//		{
+//			fi->Next();
+//			FileDescriptor* fd = fi->GetFileDescriptor();
+//			if (strcmp(fd->GetName(), nt[0]) != 0
+//				&& strcmp(fd->GetType(), nt[1]) != 0)
+//			{
+//				out << "Файл не найден." << std::endl;
+//				return;
+//			}
+//			if (fd->GetSize != 0)
+//			{
+//
+//			}
+//		}
+//}
+

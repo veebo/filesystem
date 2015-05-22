@@ -39,12 +39,13 @@ void FileIterator::Delete(){
 	// ситуацию, если удаляется первый файл в системе(т.е. поле first_file в файловой
 	// системе указывает на него). Вариант пунктов 1),2) предоставлен в коде ниже
 
-	//if (!fp->is_open())
-	//	throw "Iterator is closed";
-	//size_t pos = fp->tellg();
-	//FileSystem::write_line(fp, R_FREE, 6); // 1)
-	//fp->seekg(pos, fp->beg);
-	//fs->set_filesCount(fs->GetFilesCount() - 1); // 2)
+	if (!fp->is_open())
+		throw "Iterator is closed";
+	size_t pos = fp->tellg();
+	FileSystem::write_line(fp, R_FREE, 6); // 1)
+	fp->seekg(pos, fp->beg);
+	fs->set_filesCount(fs->GetFilesCount() - 1); // 2)
+
 
 }
 
