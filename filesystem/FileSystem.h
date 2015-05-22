@@ -19,6 +19,7 @@ public:
 	void SetTomName(char* _tomName);
 	bool fssize(char *);
 	bool names_types(char *);
+	void set_first_file(int _first_file);
 
 
 private:
@@ -29,7 +30,6 @@ private:
 	size_t filesCount; //Êîëëè÷åñòâî ôàéëîâ
 	int first_file; //Èíäåêñ ïåðâîãî ôàéëà
 	std::fstream* fp; //Óêàçàòåëü íà ôàéëîâûé ïîòîê äëÿ fs.txt
-	void set_first_file(int _first_file);
 	size_t get_first_file();
 	void set_filesCount(size_t _filesCount);
 

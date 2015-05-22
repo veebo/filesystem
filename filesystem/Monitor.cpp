@@ -120,6 +120,8 @@ void Monitor::InitCommands(){
 	commands["cmprs"] = commands_ns::Cmprs;
 	commands["chfsinfo"] = commands_ns::ChFsInfo;
 	commands["format"] = commands_ns::Format;
+	commands["mkfile"] = commands_ns::MkFile;
+	commands["delfile"] = commands_ns::DelFile;
 }
 
 Monitor::~Monitor(){

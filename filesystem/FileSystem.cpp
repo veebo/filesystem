@@ -65,13 +65,32 @@ void FileSystem::CreateFile(FileDescriptor* fd){
 	if (filesCount == MAX_FILES_COUNT)
 		throw "Ïðåâûøåíî ìàêñèìàëüíîå êîëëè÷åñòâî ôàéëîâ";
 
-	while (buzy == 1) {
+	FileIterator* fi = GetIterator();
+	int N = GetFilesCount();;
+	if (N != 0)
+	{
+		while (fi->HasNext())
+		{
+			fi->Next();
+			FileDescriptor* fdtmp = fi->GetFileDescriptor();
+			if (strcmp(fdtmp->GetName(), fd->GetName()) == 0 
+				&& strcmp(fdtmp->GetType(), fd->GetType()) == 0)
+				throw "Данный файл уже создан.";
+		}
+	}
+
+	while (buzy == 1)
+	{
 		fp->seekg(META_END + (index++)*LINES_PER_FD*LINE_SIZE, fp->beg);
-		if (index > filesCount) {
+		if (index > filesCount) 
+		{
 			break;
-		} else {
+		}
+		else
+		{
 			type = read_line(fp);
-			if (strcmp(type, R_FREE) == 0){
+			if (strcmp(type, R_FREE) == 0)
+			{
 				buzy = false;
 			}
 		}
