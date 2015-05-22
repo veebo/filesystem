@@ -12,7 +12,7 @@ using namespace std;
 
 Monitor::Monitor(InputOutput* _io){
 	if (!_io)
-		throw "Input/Output Г­ГҐ Г§Г Г¤Г Г­";
+		throw "Input/Output не задан";
 	io = _io;
 	fstream* fp = new fstream(FILE_NAME, std::fstream::in | std::fstream::out);
 	
@@ -21,8 +21,8 @@ Monitor::Monitor(InputOutput* _io){
 					char *tom, *owner,*maxfssize;
 					size_t maxsize;
 					bool flag;
-					io->WriteLine("Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ С‚РѕРјР° Рё РЅР°Р¶РјРёС‚Рµ РєР»Р°РІРёС€Сѓ ENTER");
-					//Р”РѕР»Р¶РЅР° Р±С‹С‚СЊ С†РёРєР»РёС‡РµСЃРєР°СЏ РїСЂРѕРІРµСЂРєР° С‚РѕРјР°
+					io->WriteLine("Введите название тома и нажмите клавишу ENTER");
+					//Должна быть циклическая проверка тома
 					do{
 						flag=false;
 						tom = io->ReadLine(NULL)->at(0);
@@ -39,10 +39,10 @@ Monitor::Monitor(InputOutput* _io){
 								}
 							}
 						}
-						if (flag) io->WriteLine("Р’РІРµРґРµРЅС‹ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ");
+						if (flag) io->WriteLine("Введены некорректные данные");
 					}while (flag);
-					io->WriteLine("Р’РІРµРґРёС‚Рµ РёРјСЏ РІР»Р°РґРµР»СЊС†Р° Рё РЅР°Р¶РјРёС‚Рµ РєР»Р°РІРёС€Сѓ ENTER");
-					//Р”РѕР»Р¶РЅР° Р±С‹С‚СЊ С†РёРєР»РёС‡РµСЃРєР°СЏ РїСЂРѕРІРµСЂРєР° РІР»Р°РґРµР»СЊС†Р°
+					io->WriteLine("Введите имя владельца и нажмите клавишу ENTER");
+					//Должна быть циклическая проверка владельца
 					do{
 						flag=false;
 						owner = io->ReadLine(NULL)->at(0);
@@ -59,9 +59,9 @@ Monitor::Monitor(InputOutput* _io){
 								}
 							}
 						}
-						if (flag) io->WriteLine("Р’РІРµРґРµРЅС‹ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ");
+						if (flag) io->WriteLine("Введены некорректные данные");
 					}while (flag);
-					io->WriteLine("Р’РІРµРґРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅС‹Р№ РѕР±СЉРµРј Рё РЅР°Р¶РјРёС‚Рµ РєР»Р°РІРёС€Сѓ ENTER");
+					io->WriteLine("Введите максимальный объем и нажмите клавишу ENTER");
 					
 					do{
 						flag=false;
@@ -91,12 +91,12 @@ Monitor::Monitor(InputOutput* _io){
 											}
 								}else if (atol(maxfssize)==0) flag=true;
 						}
-						if (flag) io->WriteLine("Р’РІРµРґРµРЅС‹ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ"); else maxsize=atol(maxfssize);
+						if (flag) io->WriteLine("Введены некорректные данные"); else maxsize=atol(maxfssize);
 					}while (flag);
 					fp->close();
 					CreateFileSystem(FILE_NAME, tom, owner, maxsize);
 					InitCommands();
-					io->WriteLine("Р¤Р°Р№Р»РѕРІР°СЏ СЃРёСЃС‚РµРјР° СЃРѕР·РґР°РЅР°");
+					io->WriteLine("Файловая система создана");
 					io->WriteLine("");
 					return;
 		}
@@ -105,7 +105,7 @@ Monitor::Monitor(InputOutput* _io){
 		fp->close();
 		fs = new FileSystem(FILE_NAME);
 		InitCommands();
-		io->WriteLine("Р¤Р°Р№Р»РѕРІР°СЏ СЃРёСЃС‚РµРјР° Р·Р°РіСЂСѓР¶РµРЅР°");
+		io->WriteLine("Файловая система загружена");
 	}
 }
 
@@ -124,6 +124,8 @@ void Monitor::InitCommands(){
 	commands["chtype"] = commands_ns::ChType;
 	commands["mkfile"] = commands_ns::MkFile;
 	commands["delfile"] = commands_ns::DelFile;
+	commands["delfile"] = commands_ns::DelFile;
+	commands["addtofile"] = commands_ns::AddToFile;
 }
 
 Monitor::~Monitor(){
@@ -139,9 +141,9 @@ void Monitor::CreateFileSystem(char* file_name, char* tom_name, char* owner_name
 
 void Monitor::Execute(std::vector<char*>* argv_vector){
 	if (!fs)
-		throw "Р¤Р°Р№Р»РѕРІР°СЏ СЃРёСЃС‚РµРјР° РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚";
+		throw "Файловая система не существует";
 	if (argv_vector == NULL || argv_vector->size() < 1)
-		throw "РћР¶РёРґР°РµС‚СЃСЏ РєРѕРјР°РЅРґР°";
+		throw "Ожидается команда";
 
 	char* command_name = argv_vector->at(0);
 	int argc = argv_vector->size() - 1;
@@ -161,9 +163,9 @@ void Monitor::Execute(std::vector<char*>* argv_vector){
 		//io->WriteLine("Command executed.");
 	} else {
 		//char* mes = new char[strlen(command_name) + 22];
-		//sprintf_s(mes, strlen(command_name) + 23, "ГЉГ®Г¬Г Г­Г¤Г  Г­ГҐ Г­Г Г©Г¤ГҐГ­Г : '%s'", command_name);
+		//sprintf_s(mes, strlen(command_name) + 23,  : '%s'", command_name);
 		//io->WriteLine(mes);
-		io->WriteLine("РќРµ СѓРґР°Р»РѕСЃСЊ СЂР°СЃРїРѕР·РЅР°С‚СЊ РєРѕРјР°РЅРґСѓ");
+		io->WriteLine("Не удалось распознать команду");
 	}
 }
 

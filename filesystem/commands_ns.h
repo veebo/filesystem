@@ -1,13 +1,13 @@
 #include "Monitor.h"
 #include <ostream>
 
-// Тут функции, выполняемые непосредственно через монитор команд
+// Г’ГіГІ ГґГіГ­ГЄГ¶ГЁГЁ, ГўГ»ГЇГ®Г«Г­ГїГҐГ¬Г»ГҐ Г­ГҐГЇГ®Г±Г°ГҐГ¤Г±ГІГўГҐГ­Г­Г® Г·ГҐГ°ГҐГ§ Г¬Г®Г­ГЁГІГ®Г° ГЄГ®Г¬Г Г­Г¤
 namespace commands_ns {
 
-	//Временная заглушка, которая выводит информацию о системе и список файлов
+	//Г‚Г°ГҐГ¬ГҐГ­Г­Г Гї Г§Г ГЈГ«ГіГёГЄГ , ГЄГ®ГІГ®Г°Г Гї ГўГ»ГўГ®Г¤ГЁГІ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГѕ Г® Г±ГЁГ±ГІГҐГ¬ГҐ ГЁ Г±ГЇГЁГ±Г®ГЄ ГґГ Г©Г«Г®Гў
 	void stub(FileSystem *fs, int argc, char *argv[], std::ostream& out);
 
-	//Функция для выхода из прогаммы, которую, нужно вписать в ТЗ.
+	//Г”ГіГ­ГЄГ¶ГЁГї Г¤Г«Гї ГўГ»ГµГ®Г¤Г  ГЁГ§ ГЇГ°Г®ГЈГ Г¬Г¬Г», ГЄГ®ГІГ®Г°ГіГѕ, Г­ГіГ¦Г­Г® ГўГЇГЁГ±Г ГІГј Гў Г’Г‡.
 	void Exit(FileSystem *fs, int argc, char *argv[], std::ostream& out);
 
 	void List(FileSystem *fs, int argc, char *argv[], std::ostream& out);
@@ -31,4 +31,6 @@ namespace commands_ns {
 	void ChFsInfo(FileSystem *fs, int argc, char *argv[], std::ostream& out);
 
 	void Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& out);
+
+	void AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream& out);
 }

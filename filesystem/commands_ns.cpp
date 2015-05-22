@@ -643,7 +643,7 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
 
 
 
-void AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream& out)
+void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream& out)
 {
 	size_t size = 0;
 	if (argc != 2)
