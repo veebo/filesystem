@@ -26,7 +26,19 @@ Monitor::Monitor(InputOutput* _io){
 					do{
 						flag=false;
 						tom = io->ReadLine(NULL)->at(0);
-						if (strlen(tom)>20) flag=true;
+						if (strlen(tom) > 20 || strlen(tom) <= 0){
+							flag =true;
+						}else
+						{
+							for (int i = 0;i<strlen(tom);++i)
+							{
+								int k = (int)tom[i];
+								if (k<48 || k>122 ||(k>57 && k<65)||(k>90 && k<97)){
+									flag = true;
+									break;
+								}
+							}
+						}
 						if (flag) io->WriteLine("Введены некорректные данные");
 					}while (flag);
 					io->WriteLine("Введите имя владельца и нажмите клавишу ENTER");
@@ -34,7 +46,19 @@ Monitor::Monitor(InputOutput* _io){
 					do{
 						flag=false;
 						owner = io->ReadLine(NULL)->at(0);
-						if (strlen(owner)>20) flag=true;
+						if (strlen(owner) > 20 || strlen(owner) <= 0){
+							flag =true;
+						}else
+						{
+							for (int i = 0;i<strlen(owner);++i)
+							{
+								int k = (int)owner[i];
+								if (k<48 || k>122 ||(k>57 && k<65)||(k>90 && k<97)){
+									flag = true;
+									break;
+								}
+							}
+						}
 						if (flag) io->WriteLine("Введены некорректные данные");
 					}while (flag);
 					io->WriteLine("Введите максимальный объем и нажмите клавишу ENTER");
@@ -88,11 +112,14 @@ Monitor::Monitor(InputOutput* _io){
 void Monitor::InitCommands(){
 
 	commands["stub"] = commands_ns::stub;
+	
 	commands["exit"] = commands_ns::Exit;
 	commands["list"] = commands_ns::List;
 	commands["lista"] = commands_ns::Lista;
 	commands["diskinfo"] = commands_ns::DiskInfo;
 	commands["cmprs"] = commands_ns::Cmprs;
+	commands["chfsinfo"] = commands_ns::ChFsInfo;
+	commands["format"] = commands_ns::Format;
 }
 
 Monitor::~Monitor(){
