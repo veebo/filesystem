@@ -12,51 +12,76 @@ using namespace std;
 
 Monitor::Monitor(InputOutput* _io){
 	if (!_io)
-		throw "Input/Output ÌÂ Á‡‰‡Ì";
+		throw "Input/Output √≠√• √ß√†√§√†√≠";
 	io = _io;
 	fstream* fp = new fstream(FILE_NAME, std::fstream::in | std::fstream::out);
 	
 	if (!fp->is_open()) {
-		char* str;
-
-		io->WriteLine("‘‡ÈÎÓ‚‡ˇ ÒËÒÚÂÏ‡ ÌÂ ÒÓÁ‰‡Ì‡. ∆ÂÎ‡ÂÚÂ ÒÓÁ‰‡Ú¸ ÌÓ‚Û˛? [y/n]");
 		while (!fp->is_open()){
-			str = io->ReadLine(" \t")->at(0);
-			if (strlen(str) > 0){
-				if (tolower(str[0]) == 'y'){
-					char *tom, *owner;
+					char *tom, *owner,*maxfssize;
 					size_t maxsize;
-					io->WriteLine("¬‚Â‰ËÚÂ Ì‡Á‚‡ÌËÂ ÚÓÏ‡");
-					tom = io->ReadLine(NULL)->at(0);
-					io->WriteLine("¬‚Â‰ËÚÂ ËÏˇ ‚Î‡‰ÂÎ¸ˆ‡");
-					owner = io->ReadLine(NULL)->at(0);
-					io->WriteLine("¬‚Â‰ËÚÂ Ï‡ÍÒËÏ‡Î¸Ì˚È Ó·˙ÂÏ ÒËÒÚÂÏ˚ (‚ Í¡)");
-					while (1) {
-						maxsize = atol(io->ReadLine(" \t")->at(0));
-						if (maxsize <= 0){
-							io->WriteLine("ÕÂÍÓÂÍÚÌ˚È ‚‚Ó‰. œÓÔÓ·ÛÈÚÂ ÒÌÓ‚‡");
-						} else {
-							fp->close();
-							CreateFileSystem(FILE_NAME, tom, owner, maxsize);
-							InitCommands();
-							io->WriteLine("‘‡ÈÎÓ‚‡ˇ ÒËÒÚÂÏ‡ ÒÓÁ‰‡Ì‡");
-							io->WriteLine("");
-							return;
+					bool flag;
+					io->WriteLine("–í–≤–µ–¥–∏—Ç–µ –Ω–∞–∑–≤–∞–Ω–∏–µ —Ç–æ–º–∞ –∏ –Ω–∞–∂–º–∏—Ç–µ –∫–ª–∞–≤–∏—à—É ENTER");
+					//–î–æ–ª–∂–Ω–∞ –±—ã—Ç—å —Ü–∏–∫–ª–∏—á–µ—Å–∫–∞—è –ø—Ä–æ–≤–µ—Ä–∫–∞ —Ç–æ–º–∞
+					do{
+						flag=false;
+						tom = io->ReadLine(NULL)->at(0);
+						if (strlen(tom)>20) flag=true;
+						if (flag) io->WriteLine("–í–≤–µ–¥–µ–Ω—ã –Ω–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–µ –¥–∞–Ω–Ω—ã–µ");
+					}while (flag);
+					io->WriteLine("–í–≤–µ–¥–∏—Ç–µ –∏–º—è –≤–ª–∞–¥–µ–ª—å—Ü–∞ –∏ –Ω–∞–∂–º–∏—Ç–µ –∫–ª–∞–≤–∏—à—É ENTER");
+					//–î–æ–ª–∂–Ω–∞ –±—ã—Ç—å —Ü–∏–∫–ª–∏—á–µ—Å–∫–∞—è –ø—Ä–æ–≤–µ—Ä–∫–∞ –≤–ª–∞–¥–µ–ª—å—Ü–∞
+					do{
+						flag=false;
+						owner = io->ReadLine(NULL)->at(0);
+						if (strlen(owner)>20) flag=true;
+						if (flag) io->WriteLine("–í–≤–µ–¥–µ–Ω—ã –Ω–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–µ –¥–∞–Ω–Ω—ã–µ");
+					}while (flag);
+					io->WriteLine("–í–≤–µ–¥–∏—Ç–µ –º–∞–∫—Å–∏–º–∞–ª—å–Ω—ã–π –æ–±—ä–µ–º –∏ –Ω–∞–∂–º–∏—Ç–µ –∫–ª–∞–≤–∏—à—É ENTER");
+					
+					do{
+						flag=false;
+						maxfssize = io->ReadLine(NULL)->at(0);
+						for (int i=0;i<strlen(maxfssize);++i)
+						{
+							if ((unsigned int)(maxfssize[i])<48||(unsigned int)(maxfssize[i])>57)
+							{
+								flag=true;
+								break;
+							}
 						}
-					}
-				} else if (tolower(str[0]) == 'n'){
-					exit(0);
-				} else{
-					io->GetOutput() << "ÕÂÍÓÂÍÚÌ˚È ‚‚Ó‰. ¬‚Â‰ËÚÂ 'y' ËÎË 'n'" << endl;
-				}
-			}
+						if (!flag){
+							if ((maxfssize[0]=='-')||(strlen(maxfssize) > 10))
+								{
+									flag=true;
+								}
+								else if (strlen(maxfssize) == 10){
+										//2147483647
+										char MAX_FS_SIZE[]={'2','1','4','7','4','8','3','6','4','7'};
+										for (int i=0;i<10;++i)
+											{
+												if (maxfssize[i]>MAX_FS_SIZE[i]){
+												flag=true;
+												break;
+												}else if (maxfssize[i]<MAX_FS_SIZE[i]) break;
+											}
+								}else if (atol(maxfssize)==0) flag=true;
+						}
+						if (flag) io->WriteLine("–í–≤–µ–¥–µ–Ω—ã –Ω–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–µ –¥–∞–Ω–Ω—ã–µ"); else maxsize=atol(maxfssize);
+					}while (flag);
+					fp->close();
+					CreateFileSystem(FILE_NAME, tom, owner, maxsize);
+					InitCommands();
+					io->WriteLine("–§–∞–π–ª–æ–≤–∞—è —Å–∏—Å—Ç–µ–º–∞ —Å–æ–∑–¥–∞–Ω–∞");
+					io->WriteLine("");
+					return;
 		}
 	}
 	else {
 		fp->close();
 		fs = new FileSystem(FILE_NAME);
 		InitCommands();
-		io->WriteLine("‘‡ÈÎÓ‚‡ˇ ÒËÒÚÂÏ‡ Á‡„ÛÊÂÌ‡");
+		io->WriteLine("–§–∞–π–ª–æ–≤–∞—è —Å–∏—Å—Ç–µ–º–∞ –∑–∞–≥—Ä—É–∂–µ–Ω–∞");
 	}
 }
 
@@ -82,9 +107,9 @@ void Monitor::CreateFileSystem(char* file_name, char* tom_name, char* owner_name
 
 void Monitor::Execute(std::vector<char*>* argv_vector){
 	if (!fs)
-		throw "‘‡ÈÎÓ‚‡ˇ ÒËÒÚÂÏ‡ ÌÂ ÒÛ˘ÂÒÚ‚ÛÂÚ";
+		throw "–§–∞–π–ª–æ–≤–∞—è —Å–∏—Å—Ç–µ–º–∞ –Ω–µ —Å—É—â–µ—Å—Ç–≤—É–µ—Ç";
 	if (argv_vector == NULL || argv_vector->size() < 1)
-		throw " ÓÏ‡Ì‰‡ ÓÚÒÛÚÒÚ‚ÛÂÚ";
+		throw "–û–∂–∏–¥–∞–µ—Ç—Å—è –∫–æ–º–∞–Ω–¥–∞";
 
 	char* command_name = argv_vector->at(0);
 	int argc = argv_vector->size() - 1;
@@ -103,9 +128,10 @@ void Monitor::Execute(std::vector<char*>* argv_vector){
 		commands[command_name](fs, argc, argv, io->GetOutput());
 		//io->WriteLine("Command executed.");
 	} else {
-		char* mes = new char[strlen(command_name) + 22];
-		sprintf_s(mes, strlen(command_name) + 23, " ÓÏ‡Ì‰‡ ÌÂ Ì‡È‰ÂÌ‡: '%s'", command_name);
-		io->WriteLine(mes);
+		//char* mes = new char[strlen(command_name) + 22];
+		//sprintf_s(mes, strlen(command_name) + 23, "√ä√Æ√¨√†√≠√§√† √≠√• √≠√†√©√§√•√≠√†: '%s'", command_name);
+		//io->WriteLine(mes);
+		io->WriteLine("–ù–µ —É–¥–∞–ª–æ—Å—å —Ä–∞—Å–ø–æ–∑–Ω–∞—Ç—å –∫–æ–º–∞–Ω–¥—É");
 	}
 }
 
