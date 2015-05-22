@@ -641,39 +641,135 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
  	delete[] arg_type;
 }
 
-//void AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream& out)
-//{
-//	if (argc != 2)
-//	{
-//		out << "Неверное количество параметров." << std::endl;
-//		return;
-//	}
-//	char *nt[2];
-//	nt[0] = strtok(argv[0], ".");
-//	nt[1] = strtok(NULL, " ,.-");
-//	if (fs->names_types(nt[0]) == 1)
-//	{
-//		out << "Некорректные данные." << std::endl;
-//		return;
-//	}
-//	FileIterator* fi = fs->GetIterator();
-//	int N = fs->GetFilesCount();
-//	if (N != 0)
-//	{
-//		while (fi->HasNext())
-//		{
-//			fi->Next();
-//			FileDescriptor* fd = fi->GetFileDescriptor();
-//			if (strcmp(fd->GetName(), nt[0]) != 0
-//				&& strcmp(fd->GetType(), nt[1]) != 0)
-//			{
-//				out << "Файл не найден." << std::endl;
-//				return;
-//			}
-//			if (fd->GetSize != 0)
-//			{
-//
-//			}
-//		}
-//}
+
+
+void AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream& out)
+{
+	size_t size = 0;
+	if (argc != 2)
+	{
+		out << "Неверное количество параметров." << std::endl;
+		return;
+	}
+
+	char *nt[2];
+	nt[0] = strtok(argv[0], ".");
+	nt[1] = strtok(NULL, " ,.-");
+	if (fs->names_types(nt[0]) == 1)
+	{
+		out << "Некорректные данные." << std::endl;
+		return;
+	};
+
+
+	FileIterator* fi = fs->GetIterator();
+	int N = fs->GetFilesCount();
+
+	if (N != 0)
+	{
+		while (fi->HasNext())
+		{
+			fi->Next();
+			FileDescriptor* fd = fi->GetFileDescriptor();
+
+			size = (size + fd->GetSize);
+
+		};
+
+
+	};
+
+	size_t e = fs->GetMaxSize();
+	if ((e - size) > 0)
+	{
+		out << "Превышен максимальный объем." << std::endl;
+	};
+
+	if (N != 0)
+	{
+		while (fi->HasNext())
+		{
+			fi->Next();
+			FileDescriptor* fd = fi->GetFileDescriptor();
+			if (strcmp(fd->GetName(), nt[0]) != 0
+				&& strcmp(fd->GetType(), nt[1]) != 0)
+			{
+				out << "Файл не найден." << std::endl;
+				return;
+			}
+			else
+			{
+				FileIterator* cur = fi;
+
+				if (fd->GetSize != 0)
+				{
+					int j = 0;
+					int jmin = 0;
+					size_t min;
+
+					std::vector<int> space;
+
+					space.push_back(START);
+					space.push_back(END);
+
+					FileIterator* iter = fs->GetIterator();
+					FileDescriptor* fd;
+
+					int i = 1;
+
+					int destoffset;
+					while (iter->HasNext()){
+						iter->Next();
+						fd = iter->GetFileDescriptor();
+
+						space.push_back(fd->GetOffset());
+
+						space.push_back(fd->GetOffset() + fd->GetSize());
+						delete fd;
+						++i;
+					}
+
+					//сортируем вектор
+					std::sort(space.begin(), space.end());
+
+					//итератор по вектору
+					std::vector<int>::iterator it = space.begin();
+
+					//Тут будем хранить предыдущий оффсет
+					int prevOffset = *it;
+
+					++it;
+
+					i = 0;
+					for (; it != space.end(); ++it){
+
+						//Проверяем только четные значения i, т.к. там будут свободные места
+						if (i % 2 == 0){
+							if (*it - prevOffset >= size){
+
+								destoffset = prevOffset;
+								fd = cur->GetFileDescriptor;
+								fd->SetSize(strlen(argv[1]));
+								fd->SetOffset(destoffset);
+								cur->SetFileDescriptor(fd);
+
+							}
+						}
+
+						prevOffset = *it;
+						++i;
+					}
+					return;
+
+				}
+				else
+				{
+					fd->SetSize(strlen(argv[1]));
+				}
+			};
+		}
+	}
+}
+
+
 
