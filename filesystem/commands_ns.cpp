@@ -443,6 +443,204 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 
 }
 
+void commands_ns::RenFile(FileSystem *fs, int argc, char *argv[], std::ostream& out)
+{
+	FileIterator* fi = fs->GetIterator();
+	int i = 0, count = strlen(argv[0]), flag = 1;
+	char *arg_name = new char[count];
+	if (argc != 2)
+	{
+		out << "Неправильное количество параметров" << std::endl;
+		delete[] arg_name;
+		return;
+	}
+
+	while (argv[0][i] != '.')
+	{
+		arg_name[i] = argv[0][i];
+		++i;
+		if (i > count - 2)
+		{
+			out << "Введены некорректные данные" << std::endl;
+			delete[] arg_name;
+			return;
+		}
+	}
+
+	if (i == 0)
+	{
+		out << "Введены некорректные данные" << std::endl;
+		delete[] arg_name;
+		return;
+	}
+
+	arg_name[i] = '\0'; count -= i; ++i;
+	char *arg_type = new char[count];
+	count = 0;
+	while (argv[0][i])
+	{
+		arg_type[count] = argv[0][i];
+		++i;
+		++count;
+	}
+
+	arg_type[count] = '\0';
+	count = 0;
+
+	if (fs->names_types(arg_name) || fs->names_types(arg_type)||fs->names_types(argv[1]))
+	{
+		out << "Введены некорректные данные" << std::endl;
+		delete[] arg_name;
+		delete[] arg_type;
+		return;
+	}
+
+	if (fs->GetFilesCount() != 0)
+	{
+		while (fi->HasNext())
+		{
+			fi->Next();
+			FileDescriptor* fd = fi->GetFileDescriptor();
+			if (strcmp(fd->GetName(), arg_name) == 0 && strcmp(fd->GetType(), arg_type) == 0)
+			{
+				if (strcmp(arg_name,argv[1])==0){
+					out << "Изменение имени прошло успешно" << std::endl;
+					delete[] arg_name;
+ 					delete[] arg_type;
+					return;
+				}
+				FileIterator* fi2 = fs->GetIterator();
+				while (fi2->HasNext())
+				{
+					fi2->Next();
+					FileDescriptor* fd2 = fi2->GetFileDescriptor();
+					if (strcmp(fd2->GetName(), argv[1]) == 0 && strcmp(fd2->GetType(), arg_type) == 0)
+						{
+							out << "Файл с таким именем и типом уже существует" << std::endl;
+							delete[] arg_name;
+ 							delete[] arg_type;
+							return;
+						}
+				}
+				flag = 0;
+				fd->SetName(argv[1]);
+				fi->SetFileDescriptor(fd);
+				out << "Изменение имени прошло успешно" << std::endl;
+				delete[] arg_name;
+ 				delete[] arg_type;
+				return;
+			}
+			++count;
+		}
+	}
+	if (flag == 1)
+	{
+		out << "Файла в системе не обнаружено" << std::endl;
+	}
+
+	delete[] arg_name;
+ 	delete[] arg_type;
+}
+
+void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& out)
+{
+	FileIterator* fi = fs->GetIterator();
+	int i = 0, count = strlen(argv[0]), flag = 1;
+	char *arg_name = new char[count];
+	if (argc != 2)
+	{
+		out << "Неправильное количество параметров" << std::endl;
+		delete[] arg_name;
+		return;
+	}
+
+	while (argv[0][i] != '.')
+	{
+		arg_name[i] = argv[0][i];
+		++i;
+		if (i > count - 2)
+		{
+			out << "Введены некорректные данные" << std::endl;
+			delete[] arg_name;
+			return;
+		}
+	}
+
+	if (i == 0)
+	{
+		out << "Введены некорректные данные" << std::endl;
+		delete[] arg_name;
+		return;
+	}
+
+	arg_name[i] = '\0'; count -= i; ++i;
+	char *arg_type = new char[count];
+	count = 0;
+	while (argv[0][i])
+	{
+		arg_type[count] = argv[0][i];
+		++i;
+		++count;
+	}
+
+	arg_type[count] = '\0';
+	count = 0;
+
+	if (fs->names_types(arg_name) || fs->names_types(arg_type)||fs->names_types(argv[1]))
+	{
+		out << "Введены некорректные данные" << std::endl;
+		delete[] arg_name;
+		delete[] arg_type;
+		return;
+	}
+
+	if (fs->GetFilesCount() != 0)
+	{
+		while (fi->HasNext())
+		{
+			fi->Next();
+			FileDescriptor* fd = fi->GetFileDescriptor();
+			if (strcmp(fd->GetName(), arg_name) == 0 && strcmp(fd->GetType(), arg_type) == 0)
+			{
+				if (strcmp(arg_type,argv[1])==0){
+					out << "Изменение имени прошло успешно" << std::endl;
+					delete[] arg_name;
+ 					delete[] arg_type;
+					return;
+				}
+				FileIterator* fi2 = fs->GetIterator();
+				while (fi2->HasNext())
+				{
+					fi2->Next();
+					FileDescriptor* fd2 = fi2->GetFileDescriptor();
+					if (strcmp(fd2->GetName(), arg_name) == 0 && strcmp(fd2->GetType(), argv[1]) == 0)
+						{
+							out << "Файл с таким именем и типом уже существует" << std::endl;
+							delete[] arg_name;
+							delete[] arg_type;
+							return;
+						}
+				}
+				flag = 0;
+				fd->SetType(argv[1]);
+				fi->SetFileDescriptor(fd);
+				out << "Изменение имени прошло успешно" << std::endl;
+				delete[] arg_name;
+ 				delete[] arg_type;
+				return;
+			}
+			++count;
+		}
+	}
+	if (flag == 1)
+	{
+		out << "Файла в системе не обнаружено" << std::endl;
+	}
+
+	delete[] arg_name;
+ 	delete[] arg_type;
+}
+
 //void AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream& out)
 //{
 //	if (argc != 2)
