@@ -658,7 +658,7 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 	};
 
 	size_t e = fs->GetMaxSize();
-	if ((e - size) > 0)
+	if ((e - size)  <= 0)
 	{
 		out << "Превышен максимальный объем." << std::endl;
 	};
