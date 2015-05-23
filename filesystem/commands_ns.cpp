@@ -344,7 +344,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 
 void commands_ns::MkFile(FileSystem *fs, int argc, char *argv[], std::ostream& out)
 {
-	if (argc != 2)
+	if (argc != 1)
 	{
 		out << "Неверное количество параметров."<< std::endl;
 		return;
