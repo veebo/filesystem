@@ -46,7 +46,6 @@ void FileIterator::Delete(){
 	fp->seekg(pos, fp->beg);
 	fs->set_filesCount(fs->GetFilesCount() - 1); // 2)
 
-
 }
 
 
@@ -120,4 +119,8 @@ void FileIterator::set_next(int index){
 	fp->seekp(pos + (LINES_PER_FD - 2)*LINE_SIZE, fp->beg);
 	FileSystem::write_line(fp, next);
 	fp->seekp(pos, fp->beg);
+}
+
+int FileIterator::GetNextIndex(){
+	return next;
 }

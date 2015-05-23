@@ -211,7 +211,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 	} while (fi->HasNext());
 	max_indx = indx - 1;
 	//вставляем пустой блок в начало, если нужно
-	size_t FD_END = MAX_FILES_COUNT*LINES_PER_FD*LINE_SIZE + META_END;
+	size_t FD_END = START_OF_FILE_SPACE;
 	if ((*(List.begin())).offset > FD_END)
 	{
 		ml.offset = FD_END;
@@ -377,7 +377,7 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 		out << "Неверное количество параметров." << std::endl;
 		return;
 	}
-	if (strlen(argv[0]) > 10)
+	if (strlen(argv[0]) > 20)
 	{
 		out << "Некорректные данные." << std::endl;
 		return;
@@ -391,28 +391,30 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 		return;
 	}
 	FileIterator* fi = fs->GetIterator();
-	FileIterator* prevfi;
+	FileIterator* prevfi = fs->GetIterator();
 	int j = 0;
+	int next_index;
+
 	if (fs->GetFilesCount() != 0)
 	{
 		while (fi->HasNext())
 		{
-			
+			fi->Next();
 			FileDescriptor* fd = fi->GetFileDescriptor();
+			next_index = fi->GetNextIndex();
+
 			if (strcmp(fd->GetName(), nt[0]) == 0
 				&& strcmp(fd->GetType(), nt[1]) == 0)
 			{
-				if (prevfi == NULL)
-				{
-					fs->set_first_file(1);
+				if (j == 0){
+					fs->set_first_file(next_index);
+				} else {
+					prevfi->set_next(next_index);
 					fi->Delete();
-					return;
+					break;
 				}
-				prevfi->set_next(j+1);
-
 			}
-			prevfi = fi;
-			fi->Next();	
+			prevfi->Next();
 			j++;
 		}
 	}

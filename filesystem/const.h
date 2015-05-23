@@ -10,7 +10,7 @@
 
 #define META_END 6 * LINE_SIZE // Начало области файловых дескрипторов в файле(fs.txt) 
 
-#define START_OF_FILE_SPACE 0 //Начало области записи файлов
+#define START_OF_FILE_SPACE MAX_FILES_COUNT*LINES_PER_FD*LINE_SIZE+META_END //Начало области записи файлов
 
 #define R_FREE	"001000" //Запись о свободной области
 
