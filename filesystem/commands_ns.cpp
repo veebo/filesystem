@@ -31,22 +31,22 @@ void commands_ns::stub(FileSystem *fs, int argc, char *argv[], std::ostream& out
 
 void commands_ns::Exit(FileSystem *fs, int argc, char *argv[], std::ostream& out){
 	if (argc!=0){
-		out<<"РќРµРїСЂР°РІРёР»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂР°РјРµС‚СЂРѕРІ"<<std::endl;
+		out<<"Неправильное количество параметров"<<std::endl;
 		return;
 	}
 	exit(0);
 }
-/*РњРѕРґСѓР»СЊ РІС‹РІРѕРґР° РѕРіР»Р°РІР»РµРЅРёСЏ РІ РїРѕСЂСЏРґРєРµ, РІ РєРѕС‚РѕСЂРѕРј С„Р°Р№Р»С‹ РїСЂРµРґСЃС‚Р°РІР»РµРЅС‹ РІ СЃРёСЃС‚РµРјРµ 
-РђРІС‚РѕСЂ: РџР°РІР»РѕРІ РќРёРєРѕР»Р°Р№
+/*Модуль вывода оглавления в порядке, в котором файлы представлены в системе 
+Автор: Павлов Николай
 write in Microsoft  Visual Studio 2010*/
 void commands_ns::List(FileSystem *fs, int argc, char *argv[], std::ostream& out){
   if(argc!=0) {
-  	out<<"РќРµРїСЂР°РІРёР»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂР°РјРµС‚СЂРѕРІ"<<std::endl;
+  	out<<"Неправильное количество параметров"<<std::endl;
 	return;
   }
   FileIterator* fi=fs->GetIterator();
   if(fs->GetFilesCount()!=0){
-	  out<<"РћР±РЅР°СЂСѓР¶РµРЅРЅС‹Рµ С„Р°Р№Р»С‹:"<<std::endl;
+	  out<<"Обнаруженные файлы:"<<std::endl;
 	  while(fi->HasNext()){
 		 fi->Next();
 		 FileDescriptor* fd=fi->GetFileDescriptor();
@@ -55,22 +55,22 @@ void commands_ns::List(FileSystem *fs, int argc, char *argv[], std::ostream& out
 	 }
   }
   else 
-	  out<<"Р¤Р°Р№Р»РѕРІ РІ СЃРёСЃС‚РµРјРµ РЅРµ РѕР±РЅР°СЂСѓР¶РµРЅРѕ."<< std::endl;
+	  out<<"Файлов в системе не обнаружено."<< std::endl;
 
 }
-/*РњРѕРґСѓР»СЊ РІС‹РІРѕРґР° РѕРіР»Р°РІР»РµРЅРёСЏ РІ Р°Р»С„Р°РІРёС‚РЅРѕРј РїРѕСЂСЏРґРєРµ
-РђРІС‚РѕСЂ: РџР°РІР»РѕРІ РќРёРєРѕР»Р°Р№
+/*Модуль вывода оглавления в алфавитном порядке
+Автор: Павлов Николай
 write in Microsoft  Visual Studio 2010*/
 void commands_ns::Lista(FileSystem *fs, int argc, char *argv[], std::ostream& out){
   if(argc!=0) {
-  	out<<"РќРµРїСЂР°РІРёР»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂР°РјРµС‚СЂРѕРІ"<<std::endl;
+  	out<<"Неправильное количество параметров"<<std::endl;
 	return;
   }
    FileIterator* fi=fs->GetIterator();
    int N=fs->GetFilesCount();
    char** spisok=new char*[N];
    if(N!=0){
-	   out<<"РћР±РЅР°СЂСѓР¶РµРЅРЅС‹Рµ С„Р°Р№Р»С‹:"<<std::endl;
+	   out<<"Обнаруженные файлы:"<<std::endl;
 	   int j=0;
        while(fi->HasNext()){
 		   fi->Next();
@@ -80,7 +80,7 @@ void commands_ns::Lista(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 	       j++;
        }
 
-//Р°Р»РіРѕСЂРёС‚Рј СЃРѕСЂС‚РёСЂРѕРІРєРё
+//алгоритм сортировки
        char temp[40]; 
        for (int i=1;i<N;i++){
 		   for (int j=0;j<N-1;j++){
@@ -91,22 +91,22 @@ void commands_ns::Lista(FileSystem *fs, int argc, char *argv[], std::ostream& ou
                }
            }
        }
-//РІС‹РІРѕРґ РїРѕСЃС‚СЂРѕРµРЅРЅРѕРіРѕ СЃРїРёСЃРєР° РёРјРµРЅ
+//вывод построенного списка имен
 	   for(int i=0;i<N;i++){
 		   out<<'\t';
 	       out<<spisok[i]<< std::endl;
        }
   }
   else 
-	  out<<"Р¤Р°Р№Р»РѕРІ РІ СЃРёСЃС‚РµРјРµ РЅРµ РѕР±РЅР°СЂСѓР¶РµРЅРѕ."<< std::endl;
+	  out<<"Файлов в системе не обнаружено."<< std::endl;
 }
 
 void commands_ns::DiskInfo(FileSystem *fs, int argc, char *argv[], std::ostream& out){	
 	if (argc != 0) {
-		out << "РќРµРїСЂР°РІРёР»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂР°РјРµС‚СЂРѕРІ" << std::endl;
+		out << "Неправильное количество параметров" << std::endl;
 		return;
 	}
-	//СЂР°Р·РјРµСЂС‹ С„Р°Р№Р»РѕРІ РґР°РЅС‹ РІ Р±Р°Р№С‚Р°С…
+	//размеры файлов даны в байтах
 	size_t totalUsedSpace = 0;
 	size_t fileSystemSize = fs->GetMaxSize();
 	FileIterator* fileIterator = fs->GetIterator();
@@ -120,10 +120,10 @@ void commands_ns::DiskInfo(FileSystem *fs, int argc, char *argv[], std::ostream&
 	size_t freeDiskSpace = fileSystemSize - totalUsedSpace;
 	double ratio = (double)freeDiskSpace/fileSystemSize; 
 	
-	out << "РЎРІРµРґРµРЅРёСЏ Рѕ РґРёСЃРєРµ:" << std::endl;
-	out << "РќР°РёРјРµРЅРѕРІР°РЅРёРµ: " << fs->GetTomName() << std::endl;
-	out << "Р Р°Р·РјРµСЂ СЃРІРѕР±РѕРґРЅРѕРіРѕ РјРµСЃС‚Р°: " << freeDiskSpace << " Р± (" << ratio*100 << "%)" << std::endl;
-	out << "РњР°РєСЃРёРјР°Р»СЊРЅС‹Р№ РѕР±СЉРµРј: " << fileSystemSize << " Р±" << std::endl;
+	out << "Сведения о диске:" << std::endl;
+	out << "Наименование: " << fs->GetTomName() << std::endl;
+	out << "Размер свободного места: " << freeDiskSpace << " б (" << ratio*100 << "%)" << std::endl;
+	out << "Максимальный объем: " << fileSystemSize << " б" << std::endl;
 
 }
 
@@ -131,32 +131,32 @@ void commands_ns::ChFsInfo(FileSystem *fs, int argc, char *argv[], std::ostream&
 {
 	if (argc != 2)
 	{
-		out << "РќРµРІРµСЂРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂР°РјРµС‚СЂРѕРІ"<< std::endl;
+		out << "Неверное количество параметров"<< std::endl;
 		return;
 	}
 	else
 	{
 		if (fs->names_types(argv[0]) || fs->names_types(argv[1]))
 		{
-			out << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ" << std::endl;
+			out << "Некорректные данные" << std::endl;
 			return;
 		}
 		else
 		{
 			fs->SetTomName(argv[0]);
 			fs->SetOwner(argv[1]);
-			out << "РўРµРєСѓС‰Р°СЏ РјРµС‚РєР° С‚РѕРјР°:    " << fs->GetTomName() <<std::endl 
-				<< "РўРµРєСѓС‰РµРµ РёРјСЏ РІР»Р°РґРµР»СЊС†Р°: " << fs->GetOwner() << std::endl
-				<< "РР·РјРµРЅРµРЅРёРµ РёРЅС„РѕСЂРјР°С†РёРё Рѕ Р¤РЎ СѓСЃРїРµС€РЅРѕ" << std::endl;
+			out << "Текущая метка тома:    " << fs->GetTomName() <<std::endl 
+				<< "Текущее имя владельца: " << fs->GetOwner() << std::endl
+				<< "Изменение информации о ФС успешно" << std::endl;
 		}
 	}
 }
 
-void  commands_ns::Format(FileSystem *fs, int argc, char *argv[], std::ostream& out) // РјРѕРґСѓР»СЊ РЅРµ РґРѕСЂР°Р±РѕС‚Р°РЅ Р¶РґСѓ РјРѕРґСѓР»СЏ Delete()
+void  commands_ns::Format(FileSystem *fs, int argc, char *argv[], std::ostream& out) // модуль не доработан жду модуля Delete()
 {
 	if (argc != 3)
 	{
-		out << "РќРµРІРµСЂРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂР°РјРµС‚СЂРѕРІ"<< std::endl;
+		out << "Неверное количество параметров"<< std::endl;
 		return;
 	}
 	else
@@ -165,7 +165,7 @@ void  commands_ns::Format(FileSystem *fs, int argc, char *argv[], std::ostream& 
 		
 		if (fs->names_types(argv[0]) || fs->names_types(argv[1]) || fs->fssize(argv[2]))
 		{
-			out << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ" << std::endl;
+			out << "Некорректные данные" << std::endl;
 			return;
 		}
 		else
@@ -180,7 +180,7 @@ void  commands_ns::Format(FileSystem *fs, int argc, char *argv[], std::ostream& 
 				//fIter->Delete();
 			}
 			fIter->Close();
-			out << "Р¤РѕСЂРјР°С‚РёСЂРѕРІР°РЅРёРµ Р¤РЎ СѓСЃРїРµС€РЅРѕ" << std::endl;
+			out << "Форматирование ФС успешно" << std::endl;
 		}
 	}
 }
@@ -195,8 +195,8 @@ typedef struct tagMemList
 void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& out)
 {
 	if (argc > 0) { out << "This command must be used without argumnents" << std::endl; return; }
-	if (fs->GetFilesCount() <= 0) { out << "no files" << std::endl; return; }//РїСЂРѕРІРµСЂСЏРµРј РЅР°Р»РёС‡РёРµ С„Р°Р№Р»РѕРІ
-	//С„РѕСЂРјРёСЂСѓРµРј СЃРїРёСЃРѕРє Р±Р»РѕРєРѕРІ РёР· РґРµСЃРєСЂРёРїС‚РѕСЂРѕРІ РїРѕ РІРѕР·СЂР°СЃС‚Р°РЅРёСЋ СЃРјРµС‰РµРЅРёСЏ======
+	if (fs->GetFilesCount() <= 0) { out << "no files" << std::endl; return; }//проверяем наличие файлов
+	//формируем список блоков из дескрипторов по возрастанию смещения======
 	std::list < MemList> List;
 	std::list<MemList>::iterator iter;
 	FileIterator *fi = fs->GetIterator();
@@ -233,7 +233,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 		++indx;
 	} while (fi->HasNext());
 	max_indx = indx - 1;
-	//РІСЃС‚Р°РІР»СЏРµРј РїСѓСЃС‚РѕР№ Р±Р»РѕРє РІ РЅР°С‡Р°Р»Рѕ, РµСЃР»Рё РЅСѓР¶РЅРѕ
+	//вставляем пустой блок в начало, если нужно
 	size_t FD_END = MAX_FILES_COUNT*LINES_PER_FD*LINE_SIZE + META_END;
 	if ((*(List.begin())).offset > FD_END)
 	{
@@ -242,7 +242,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 		ml.FDescrPtr = NULL;
 		List.insert(List.begin(), ml);
 	}
-	//РІСЃС‚Р°РІР»СЏРµРј РїСѓСЃС‚С‹Рµ Р±Р»РѕРєРё РІ СЃРїРёСЃРѕРє
+	//вставляем пустые блоки в список
 	for (iter = List.begin(); iter != List.end(); iter++)
 	{
 		if (std::next(iter) != List.end())
@@ -259,14 +259,14 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 	}
 	//=========================================================*/
 	out << "The whole data size before compressing: " << ( (*(std::prev(List.end()))).offset + (*(std::prev(List.end()))).sz - (*(List.begin())).offset) << std::endl;
-	//СЃР¶Р°С‚РёРµ===================================================
+	//сжатие===================================================
 	for (iter = List.begin(); iter != List.end(); iter++)
 	{
-		if (!((*iter).FDescrPtr))//РµСЃР»Рё С‚РµРєСѓС‰РёР№ Р±Р»РѕРє РїСѓСЃС‚РѕР№
+		if (!((*iter).FDescrPtr))//если текущий блок пустой
 		{
-			if (std::next(iter) != List.end())//РµСЃР»Рё РЅРµ РїРѕСЃР»РµРґРЅРёР№
+			if (std::next(iter) != List.end())//если не последний
 			{
-				//РёС‰РµРј РЅР°РёР±РѕР»СЊС€РёР№ РІР»РµР·Р°СЋС‰РёР№ РІ С‚РµРєСѓС‰РёР№ РїСѓСЃС‚РѕР№ Р±Р»РѕРє СЃ РєРѕРЅС†Р°
+				//ищем наибольший влезающий в текущий пустой блок с конца
 				std::list<MemList>::iterator MaxAppr = List.end();
 				for (std::list<MemList>::iterator insIter = std::prev(List.end()); insIter != iter; insIter--)
 				{
@@ -278,81 +278,81 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 						}
 					}
 				}
-				if (MaxAppr != List.end())//РµСЃР»Рё РЅР°С€С‘Р»СЃСЏ
+				if (MaxAppr != List.end())//если нашёлся
 				{
-					MemList mlCopy = (*MaxAppr);//РєРѕРїРёСЂСѓРµРј
-					//РґРµР»Р°РµРј РїРµСЂРµРјРµС‰Р°РµРјС‹Р№ Р±Р»РѕРє РїСѓСЃС‚С‹Рј
+					MemList mlCopy = (*MaxAppr);//копируем
+					//делаем перемещаемый блок пустым
 					(*MaxAppr).FDescrPtr = NULL;
-					if ( (std::next(MaxAppr) != List.end()) && ((*(std::next(MaxAppr))).FDescrPtr == NULL) )//РµСЃР»Рё СЃР»РµРґСѓСЋС‰РёР№ РїСѓСЃС‚РѕР№ - РѕР±СЉРµРґРёРЅСЏРµРј
+					if ( (std::next(MaxAppr) != List.end()) && ((*(std::next(MaxAppr))).FDescrPtr == NULL) )//если следующий пустой - объединяем
 					{
 						size_t rmv_size = (*(std::next(MaxAppr))).sz;
 						List.erase(std::next(MaxAppr));
 						(*MaxAppr).sz += rmv_size;
 					}
-					if ((*(std::prev(MaxAppr))).FDescrPtr == NULL)//Р°РЅР°Р»РѕРіРёС‡РЅРѕ СЃ РїСЂРµРґС‹РґСѓС‰РёРј
+					if ((*(std::prev(MaxAppr))).FDescrPtr == NULL)//аналогично с предыдущим
 					{
 						size_t rmv_size = (*MaxAppr).sz;
 						std::list<MemList>::iterator li = std::prev(MaxAppr);
 						(*li).sz += rmv_size;
 						List.erase(MaxAppr);
 					}
-					//РІСЃС‚Р°РІР»СЏРµРј РєРѕРїРёСЋ РїРµСЂРµРґ С‚РµРєСѓС‰РёРј РїСѓСЃС‚С‹Рј Р±Р»РѕРєРѕРј
+					//вставляем копию перед текущим пустым блоком
 					mlCopy.offset = (*iter).offset;
 					List.insert(iter, mlCopy);
-					//РєРѕСЂСЂРµРєС‚РёСЂСѓРµРј СЃРјРµС‰РµРЅРёРµ Рё СЂР°Р·РјРµСЂ РїСѓСЃС‚РѕРіРѕ Р±Р»РѕРєР° РїРѕСЃР»Рµ РІСЃС‚Р°РІРєРё
+					//корректируем смещение и размер пустого блока после вставки
 					(*iter).sz -= mlCopy.sz;
 					(*iter).offset += mlCopy.sz;
-					//РµСЃР»Рё РїРµСЂРµРјРµС‰Р°РµРјС‹Р№ Р±Р»РѕРє РїРѕР»РЅРѕСЃС‚СЊСЋ Р·Р°РїРѕР»РЅРёР» РїСѓСЃС‚РѕР№ Р±Р»РѕРє - СѓРґР°Р»СЏРµРј С‚РµРєСѓС‰РёР№ РїСѓСЃС‚РѕР№ Р±Р»РѕРє
+					//если перемещаемый блок полностью заполнил пустой блок - удаляем текущий пустой блок
 					if ((*iter).sz == 0)
 					{
 						std::list<MemList>::iterator li = std::prev(iter);
 						List.erase(iter);
-						iter = li;//СЃС‚Р°РІРёРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РїСЂРµРґС‹РґСѓС‰РёР№
+						iter = li;//ставим указатель на предыдущий
 					}
-					else//РµСЃР»Рё РїСѓСЃС‚РѕРµ РјРµСЃС‚Рѕ РѕСЃС‚Р°Р»РѕСЃСЊ
+					else//если пустое место осталось
 					{
-						if ( (std::next(iter) != List.end()) && ((*(std::next(iter))).FDescrPtr == NULL) )//РµСЃР»Рё СЃР»РµРґСѓС‰РёР№ РїСѓСЃС‚ - РѕР±СЉРµРґРёРЅСЏРµРј
+						if ( (std::next(iter) != List.end()) && ((*(std::next(iter))).FDescrPtr == NULL) )//если следущий пуст - объединяем
 						{
 							size_t rmv_size = (*(std::next(iter))).sz;
 							List.erase(std::next(iter));
 							(*iter).sz += rmv_size;
 						}
-						--iter;//СЃС‚Р°РІРёРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РїСЂРµРґС‹РґСѓС‰РёР№ (РѕРЅ СЃСѓС‰РµСЃС‚РІСѓРµС‚, С‚Р°Рє РєР°Рє С‚РѕР»СЊРєРѕ С‡С‚Рѕ РІСЃС‚Р°РІРёР»Рё)
+						--iter;//ставим указатель на предыдущий (он существует, так как только что вставили)
 					}
 				}
-				else//РµСЃР»Рё РЅРµ РЅР°С€С‘Р»СЃСЏ Р±Р»РѕРє РґР»СЏ РІСЃС‚Р°РІРєРё
+				else//если не нашёлся блок для вставки
 				{
-					//СѓРґР°Р»СЏРµРј С‚РµРєСѓС‰РёР№ РїСѓСЃС‚РѕР№ Р±Р»РѕРє
+					//удаляем текущий пустой блок
 					size_t rmv_size = (*iter).sz;
 					std::list<MemList>::iterator insIter = List.erase(iter);
-					//СѓРјРµРЅСЊС€Р°РµРј СЃРјРµС‰РµРЅРёРµ РІСЃРµС… РїРѕСЃР»РµРґСѓСЋС‰РёС… РґРѕ РїСѓСЃС‚РѕРіРѕ Р±Р»РѕРєР°
+					//уменьшаем смещение всех последующих до пустого блока
 					for (; ((*insIter).FDescrPtr && (insIter != List.end())); insIter++)
 					{
 						(*insIter).offset -= rmv_size;
 					}
-					//РµСЃР»Рё РІСЃС‚СЂРµС‚РёР»СЃСЏ РїСѓСЃС‚РѕР№ Р±Р»РѕРє
+					//если встретился пустой блок
 					if (insIter != List.end())
 					{
-						(*insIter).offset -= rmv_size;//СѓРјРµРЅСЊС€Р°РµРј СЃРјРµС‰РµРЅРёРµ
-						(*insIter).sz += rmv_size;//СѓРІРµР»РёС‡РёРІР°РµРј СЂР°Р·РјРµСЂ
-						iter = insIter;//СЃС‚Р°РІРёРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РїСЂРµРґС‹РґСѓС‰РёР№ Р±Р»РѕРє
+						(*insIter).offset -= rmv_size;//уменьшаем смещение
+						(*insIter).sz += rmv_size;//увеличиваем размер
+						iter = insIter;//ставим указатель на предыдущий блок
 						--iter;
 					}
-					else//РµСЃР»Рё РЅРµС‚ Р±РѕР»СЊС€Рµ РїСѓСЃС‚С‹С… Р±Р»РѕРєРѕРІ - Р·Р°РІРµСЂС€Р°РµРј С†РёРєР»
+					else//если нет больше пустых блоков - завершаем цикл
 					{
 						break;
 					}
 				}
 			}
-			else//РµСЃР»Рё РїРѕСЃР»РµРґРЅРёР№
+			else//если последний
 			{
-				List.erase(iter);//СѓРґР°Р»СЏРµРј
-				break;//РІС‹С…РѕРґРёРј РёР· С†РёРєР»Р°
+				List.erase(iter);//удаляем
+				break;//выходим из цикла
 			}
 		}
 	}
-	//РІС‹РІРѕРґРёРј СЃРїРёСЃРѕРє Рё Р·Р°РїРёСЃС‹РІР°РµРј РёР·РјРµРЅРµРЅРёСЏ РІ С„Р°Р№Р»================
-	for (iter = List.begin(); iter != List.end(); iter++) { (*iter).FDescrPtr->SetOffset((*iter).offset); }//РјРµРЅСЏРµРј СЃРјРµС‰РµРЅРёРµ РІ РґРµСЃРєСЂРёРїС‚РѕСЂР°С…
+	//выводим список и записываем изменения в файл================
+	for (iter = List.begin(); iter != List.end(); iter++) { (*iter).FDescrPtr->SetOffset((*iter).offset); }//меняем смещение в дескрипторах
 	fi = fs->GetIterator();
 	for (indx = 0; indx <= max_indx; indx++)
 	{
@@ -361,7 +361,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 		fi->SetFileDescriptor((*iter).FDescrPtr);
 	}
 	fi->Close();
-	//РІС‹РІРѕРґРёРј СЂРµР·СѓР»СЊС‚Р°С‚
+	//выводим результат
 	out << "The whole data size after compressing: " << ( (*(std::prev(List.end()))).offset + (*(std::prev(List.end()))).sz - (*(List.begin())).offset) << std::endl;
 }
 
@@ -369,12 +369,12 @@ void commands_ns::MkFile(FileSystem *fs, int argc, char *argv[], std::ostream& o
 {
 	if (argc != 1)
 	{
-		out << "РќРµРІРµСЂРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂР°РјРµС‚СЂРѕРІ."<< std::endl;
+		out << "Неверное количество параметров."<< std::endl;
 		return;
 	}
 	if (strlen(argv[0]) > 10)
 	{
-		out << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ." << std::endl;
+		out << "Некорректные данные." << std::endl;
 		return;
 	};
 	char *nt[2];
@@ -382,7 +382,7 @@ void commands_ns::MkFile(FileSystem *fs, int argc, char *argv[], std::ostream& o
 	nt[1] = strtok(NULL, " ,.-");
 	if (fs->names_types(nt[0]) == 1)
 	{
-		out << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ."<< std::endl;
+		out << "Некорректные данные."<< std::endl;
 		return;
 	}
 	FileDescriptor* fd = new FileDescriptor();
@@ -396,12 +396,12 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 {
 	if (argc != 1)
 	{
-		out << "РќРµРІРµСЂРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂР°РјРµС‚СЂРѕРІ." << std::endl;
+		out << "Неверное количество параметров." << std::endl;
 		return;
 	}
 	if (strlen(argv[0]) > 10)
 	{
-		out << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ." << std::endl;
+		out << "Некорректные данные." << std::endl;
 		return;
 	};
 	char *nt[2];
@@ -409,7 +409,7 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 	nt[1] = strtok(NULL, " ,.-");
 	if (fs->names_types(nt[0]) == 1)
 	{
-		out << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ." << std::endl;
+		out << "Некорректные данные." << std::endl;
 		return;
 	}
 	FileIterator* fi = fs->GetIterator();
@@ -439,7 +439,7 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 		}
 	}
 	else
-		out << "Р¤Р°Р№Р»РѕРІ РІ СЃРёСЃС‚РµРјРµ РЅРµ РѕР±РЅР°СЂСѓР¶РµРЅРѕ." << std::endl;
+		out << "Файлов в системе не обнаружено." << std::endl;
 
 }
 
@@ -450,7 +450,7 @@ void commands_ns::RenFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 	char *arg_name = new char[count];
 	if (argc != 2)
 	{
-		out << "РќРµРїСЂР°РІРёР»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂР°РјРµС‚СЂРѕРІ" << std::endl;
+		out << "Неправильное количество параметров" << std::endl;
 		delete[] arg_name;
 		return;
 	}
@@ -461,7 +461,7 @@ void commands_ns::RenFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 		++i;
 		if (i > count - 2)
 		{
-			out << "Р’РІРµРґРµРЅС‹ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ" << std::endl;
+			out << "Введены некорректные данные" << std::endl;
 			delete[] arg_name;
 			return;
 		}
@@ -469,7 +469,7 @@ void commands_ns::RenFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 
 	if (i == 0)
 	{
-		out << "Р’РІРµРґРµРЅС‹ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ" << std::endl;
+		out << "Введены некорректные данные" << std::endl;
 		delete[] arg_name;
 		return;
 	}
@@ -489,7 +489,7 @@ void commands_ns::RenFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 
 	if (fs->names_types(arg_name) || fs->names_types(arg_type)||fs->names_types(argv[1]))
 	{
-		out << "Р’РІРµРґРµРЅС‹ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ" << std::endl;
+		out << "Введены некорректные данные" << std::endl;
 		delete[] arg_name;
 		delete[] arg_type;
 		return;
@@ -504,7 +504,7 @@ void commands_ns::RenFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 			if (strcmp(fd->GetName(), arg_name) == 0 && strcmp(fd->GetType(), arg_type) == 0)
 			{
 				if (strcmp(arg_name,argv[1])==0){
-					out << "РР·РјРµРЅРµРЅРёРµ РёРјРµРЅРё РїСЂРѕС€Р»Рѕ СѓСЃРїРµС€РЅРѕ" << std::endl;
+					out << "Изменение имени прошло успешно" << std::endl;
 					delete[] arg_name;
  					delete[] arg_type;
 					return;
@@ -516,7 +516,7 @@ void commands_ns::RenFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 					FileDescriptor* fd2 = fi2->GetFileDescriptor();
 					if (strcmp(fd2->GetName(), argv[1]) == 0 && strcmp(fd2->GetType(), arg_type) == 0)
 						{
-							out << "Р¤Р°Р№Р» СЃ С‚Р°РєРёРј РёРјРµРЅРµРј Рё С‚РёРїРѕРј СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚" << std::endl;
+							out << "Файл с таким именем и типом уже существует" << std::endl;
 							delete[] arg_name;
  							delete[] arg_type;
 							return;
@@ -525,7 +525,7 @@ void commands_ns::RenFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 				flag = 0;
 				fd->SetName(argv[1]);
 				fi->SetFileDescriptor(fd);
-				out << "РР·РјРµРЅРµРЅРёРµ РёРјРµРЅРё РїСЂРѕС€Р»Рѕ СѓСЃРїРµС€РЅРѕ" << std::endl;
+				out << "Изменение имени прошло успешно" << std::endl;
 				delete[] arg_name;
  				delete[] arg_type;
 				return;
@@ -535,7 +535,7 @@ void commands_ns::RenFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 	}
 	if (flag == 1)
 	{
-		out << "Р¤Р°Р№Р»Р° РІ СЃРёСЃС‚РµРјРµ РЅРµ РѕР±РЅР°СЂСѓР¶РµРЅРѕ" << std::endl;
+		out << "Файла в системе не обнаружено" << std::endl;
 	}
 
 	delete[] arg_name;
@@ -549,7 +549,7 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
 	char *arg_name = new char[count];
 	if (argc != 2)
 	{
-		out << "РќРµРїСЂР°РІРёР»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂР°РјРµС‚СЂРѕРІ" << std::endl;
+		out << "Неправильное количество параметров" << std::endl;
 		delete[] arg_name;
 		return;
 	}
@@ -560,7 +560,7 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
 		++i;
 		if (i > count - 2)
 		{
-			out << "Р’РІРµРґРµРЅС‹ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ" << std::endl;
+			out << "Введены некорректные данные" << std::endl;
 			delete[] arg_name;
 			return;
 		}
@@ -568,7 +568,7 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
 
 	if (i == 0)
 	{
-		out << "Р’РІРµРґРµРЅС‹ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ" << std::endl;
+		out << "Введены некорректные данные" << std::endl;
 		delete[] arg_name;
 		return;
 	}
@@ -588,7 +588,7 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
 
 	if (fs->names_types(arg_name) || fs->names_types(arg_type)||fs->names_types(argv[1]))
 	{
-		out << "Р’РІРµРґРµРЅС‹ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ" << std::endl;
+		out << "Введены некорректные данные" << std::endl;
 		delete[] arg_name;
 		delete[] arg_type;
 		return;
@@ -603,7 +603,7 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
 			if (strcmp(fd->GetName(), arg_name) == 0 && strcmp(fd->GetType(), arg_type) == 0)
 			{
 				if (strcmp(arg_type,argv[1])==0){
-					out << "РР·РјРµРЅРµРЅРёРµ РёРјРµРЅРё РїСЂРѕС€Р»Рѕ СѓСЃРїРµС€РЅРѕ" << std::endl;
+					out << "Изменение имени прошло успешно" << std::endl;
 					delete[] arg_name;
  					delete[] arg_type;
 					return;
@@ -615,7 +615,7 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
 					FileDescriptor* fd2 = fi2->GetFileDescriptor();
 					if (strcmp(fd2->GetName(), arg_name) == 0 && strcmp(fd2->GetType(), argv[1]) == 0)
 						{
-							out << "Р¤Р°Р№Р» СЃ С‚Р°РєРёРј РёРјРµРЅРµРј Рё С‚РёРїРѕРј СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚" << std::endl;
+							out << "Файл с таким именем и типом уже существует" << std::endl;
 							delete[] arg_name;
 							delete[] arg_type;
 							return;
@@ -624,7 +624,7 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
 				flag = 0;
 				fd->SetType(argv[1]);
 				fi->SetFileDescriptor(fd);
-				out << "РР·РјРµРЅРµРЅРёРµ РёРјРµРЅРё РїСЂРѕС€Р»Рѕ СѓСЃРїРµС€РЅРѕ" << std::endl;
+				out << "Изменение имени прошло успешно" << std::endl;
 				delete[] arg_name;
  				delete[] arg_type;
 				return;
@@ -634,7 +634,7 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
 	}
 	if (flag == 1)
 	{
-		out << "Р¤Р°Р№Р»Р° РІ СЃРёСЃС‚РµРјРµ РЅРµ РѕР±РЅР°СЂСѓР¶РµРЅРѕ" << std::endl;
+		out << "Файла в системе не обнаружено" << std::endl;
 	}
 
 	delete[] arg_name;
@@ -645,7 +645,7 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
 //{
 //	if (argc != 2)
 //	{
-//		out << "РќРµРІРµСЂРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂР°РјРµС‚СЂРѕРІ." << std::endl;
+//		out << "Неверное количество параметров." << std::endl;
 //		return;
 //	}
 //	char *nt[2];
@@ -653,7 +653,7 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
 //	nt[1] = strtok(NULL, " ,.-");
 //	if (fs->names_types(nt[0]) == 1)
 //	{
-//		out << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ." << std::endl;
+//		out << "Некорректные данные." << std::endl;
 //		return;
 //	}
 //	FileIterator* fi = fs->GetIterator();
@@ -667,7 +667,7 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
 //			if (strcmp(fd->GetName(), nt[0]) != 0
 //				&& strcmp(fd->GetType(), nt[1]) != 0)
 //			{
-//				out << "Р¤Р°Р№Р» РЅРµ РЅР°Р№РґРµРЅ." << std::endl;
+//				out << "Файл не найден." << std::endl;
 //				return;
 //			}
 //			if (fd->GetSize != 0)
