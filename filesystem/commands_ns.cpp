@@ -366,7 +366,11 @@ void commands_ns::MkFile(FileSystem *fs, int argc, char *argv[], std::ostream& o
 	fd->SetName(nt[0]);
 	fd->SetType(nt[1]);
 	fd->SetSize(0);
+	fd->SetOffset(0);
 	fs->CreateFile(fd);
+
+	out << "Файл создан." << std::endl;
+	return;
 }
 
 void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& out)
@@ -651,12 +655,8 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 		{
 			fi->Next();
 			FileDescriptor* fd = fi->GetFileDescriptor();
-
 			size = (size + fd->GetSize());
-
 		};
-
-
 	};
 
 	size_t e = fs->GetMaxSize();
@@ -665,90 +665,105 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 		out << "Превышен максимальный объем." << std::endl;
 	};
 
+	fi = fs->GetIterator();
+
 	if (N != 0)
 	{
-		while (fi->HasNext())
-		{
+		fi = fs->GetIterator();
+		int index = 1;
+		bool endreached = true;
+		int size_of_file = 0 ;
+
+		while (fi->HasNext()){
 			fi->Next();
 			FileDescriptor* fd = fi->GetFileDescriptor();
-			if (strcmp(fd->GetName(), nt[0]) != 0
-				&& strcmp(fd->GetType(), nt[1]) != 0)
-			{
-				out << "Файл не найден." << std::endl;
-				return;
+			if (strcmp(fd->GetName(), nt[0]) == 0
+				&& strcmp(fd->GetType(), nt[1]) == 0){
+				size_of_file = fd->GetSize();
+				endreached = false;
+				break;
 			}
-			else
-			{
-				FileIterator* cur = fi;
+			++index;
+		}
 
-				if (fd->GetSize() != 0)
-				{
-					int j = 0;
-					int jmin = 0;
-					size_t min;
+		if (endreached){
+			out << "Файл не найден." << std::endl;
+			return;
+		}
 
-					std::vector<int> space;
+		if (size_of_file == 0)
+		{
+			std::vector<int> space;
 
-					space.push_back(START_OF_FILE_SPACE);
-					space.push_back(fs->GetMaxSize());
+			space.push_back(START_OF_FILE_SPACE);
+			space.push_back(fs->GetMaxSize());
 
-					FileIterator* iter = fs->GetIterator();
-					FileDescriptor* fd;
+			FileIterator* iter = fs->GetIterator();
+			FileDescriptor* fd;
 
-					int i = 1;
+			int i = 1;
 
-					int destoffset;
-					while (iter->HasNext()){
-						iter->Next();
-						fd = iter->GetFileDescriptor();
+			int destoffset;
+			while (iter->HasNext()){
+				iter->Next();
+				fd = iter->GetFileDescriptor();
 
-						space.push_back(fd->GetOffset());
+				space.push_back(fd->GetOffset());
 
-						space.push_back(fd->GetOffset() + fd->GetSize());
-						delete fd;
-						++i;
-					}
+				space.push_back(fd->GetOffset() + fd->GetSize());
+				delete fd;
+				++i;
+			}
 
-					//сортируем вектор
-					std::sort(space.begin(), space.end());
+			//сортируем вектор
+			std::sort(space.begin(), space.end());
 
-					//итератор по вектору
-					std::vector<int>::iterator it = space.begin();
+			//итератор по вектору
+			std::vector<int>::iterator it = space.begin();
 
-					//Тут будем хранить предыдущий оффсет
-					int prevOffset = *it;
+			//Тут будем хранить предыдущий оффсет
+			int prevOffset = *it;
 
-					++it;
+			++it;
 
-					i = 0;
-					for (; it != space.end(); ++it){
+			i = 0;
+			for (; it != space.end(); ++it){
 
-						//Проверяем только четные значения i, т.к. там будут свободные места
-						if (i % 2 == 0){
-							if (*it - prevOffset >= size){
+				//Проверяем только четные значения i, т.к. там будут свободные места
+				if (i % 2 == 0){
+					if (*it - prevOffset >= size){
+						fi = fs->GetIterator();
+						i = 1;
+						destoffset = prevOffset;
 
-								destoffset = prevOffset;
-								fd = cur->GetFileDescriptor();
+						while (fi->HasNext()){
+							fi->Next();
+							if (i == index){
+								fd = fi->GetFileDescriptor();
 								fd->SetSize(strlen(argv[1]));
 								fd->SetOffset(destoffset);
-								cur->SetFileDescriptor(fd);
-
+								fi->SetFileDescriptor(fd);
+								out << "Информация добавлена." << std::endl;
+								return;
 							}
+							++i;
 						}
-
-						prevOffset = *it;
-						++i;
 					}
-					return;
+				}
 
-				}
-				else
-				{
-					fd->SetSize(strlen(argv[1]));
-				}
-			};
+				prevOffset = *it;
+				++i;
+			}
+			return;
+
+		} else
+		{
+			//fd->SetSize(strlen(argv[1]));
 		}
 	}
+
+	out << "Файл не найден." << std::endl;
+	return;
 }
 
 
