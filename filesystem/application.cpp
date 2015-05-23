@@ -13,7 +13,7 @@ int main(){
 	while (1){
 		try{
 			io->Invite();
-			input = io->ReadLine(" \t");
+			input = io->ReadLine(". \t");
 			monitor->Execute(input);
 		}
 		catch (char* e){
