@@ -21,6 +21,7 @@ Monitor::Monitor(InputOutput* _io){
 					char *tom, *owner,*maxfssize;
 					size_t maxsize;
 					bool flag;
+					io->WriteLine("Необходимо создать файловую систему.");
 					io->WriteLine("Введите название тома и нажмите клавишу ENTER");
 					//Должна быть циклическая проверка тома
 					do{

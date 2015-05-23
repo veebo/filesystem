@@ -154,7 +154,7 @@ void  commands_ns::Format(FileSystem *fs, int argc, char *argv[], std::ostream& 
 			while (fIter->HasNext())
 			{
 				fIter->Next();
-				//fIter->Delete();
+				fIter->Delete();
 			}
 			fIter->Close();
 			out << "Форматирование ФС успешно" << std::endl;
@@ -415,7 +415,8 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 				} else {
 					prevfi->set_next(next_index);
 					fi->Delete();
-					break;
+					out << "Файл удален." << std::endl;
+					return;
 				}
 			}
 			prevfi->Next();
@@ -691,6 +692,8 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 			return;
 		}
 
+		FileDescriptor* fd;
+
 		if (size_of_file == 0)
 		{
 			std::vector<int> space;
@@ -699,7 +702,6 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 			space.push_back(fs->GetMaxSize());
 
 			FileIterator* iter = fs->GetIterator();
-			FileDescriptor* fd;
 
 			int i = 1;
 
@@ -731,7 +733,7 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 
 				//Проверяем только четные значения i, т.к. там будут свободные места
 				if (i % 2 == 0){
-					if (*it - prevOffset >= size){
+					if (*it - prevOffset >= strlen(argv[1])){
 						fi = fs->GetIterator();
 						i = 1;
 						destoffset = prevOffset;
@@ -756,9 +758,12 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 			}
 			return;
 
-		} else
-		{
-			//fd->SetSize(strlen(argv[1]));
+		} else {
+			fd = fi->GetFileDescriptor();
+			fd->SetSize(fd->GetSize() + strlen(argv[1]));
+			fi->SetFileDescriptor(fd);
+			out << "Информация добавлена." << std::endl;
+			return;
 		}
 	}
 
