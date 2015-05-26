@@ -32,6 +32,7 @@ private:
 	std::fstream* fp; //Óêàçàòåëü íà ôàéëîâûé ïîòîê äëÿ fs.txt
 	size_t get_first_file();
 	void set_filesCount(size_t _filesCount);
+	void validate();
 
 	// Ñòàòè÷åñêèå ôóíêöèè äëÿ çàïèñè-÷òåíèÿ ñòðîê. Èñïîëüçóþòñÿ ýòèì êëàññîì è FileIterator.
 	static void write_line(std::fstream * fp, char *data, size_t len); 
