@@ -296,6 +296,8 @@ void FileSystem::validate(){
 	size_t pos = fp->tellg();
 	if (pos % LINE_SIZE != 0)
 		throw "Íåêîğğåêòíûé ôàéë fs.txt.";
+	fp->seekg(0, fp->beg);
+	fp->seekp(0, fp->beg);
 	return;
 	
 }
