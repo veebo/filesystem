@@ -6,8 +6,19 @@
 
 int main(){
 	setlocale(LC_ALL,"Russian"); 
-	InputOutput* io = new InputOutput(std::cin, std::cout);
-	Monitor* monitor = new Monitor(io);
+	InputOutput* io = NULL;
+	Monitor* monitor = NULL;
+
+	try{
+		io = new InputOutput(std::cin, std::cout);
+		monitor = new Monitor(io);
+	}
+	catch (char* e){
+		io->WriteLine(e);
+		_getch();
+		return 1;
+	}
+		
 	std::vector<char*>* input;
 
 	while (1){

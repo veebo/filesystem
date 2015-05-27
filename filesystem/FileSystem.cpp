@@ -9,9 +9,10 @@ FileSystem::FileSystem(char* file_name) {
 	fileName = file_name;
 	fp = new fstream(file_name, std::fstream::in | std::fstream::out);
 	if (!fp->is_open())
-		throw "Ôàéëîâàÿ ñèñòåìà íå ñóùåñòâóåò";
+		throw "������ ��� �������� ����� fs.txt";
 	first_file = -1;
 
+	validate();
 	GetTomName();
 	GetOwner();
 	GetMaxSize();
@@ -27,6 +28,7 @@ FileSystem::FileSystem(char* file_name,  char* _tomName, char* _owner, size_t _m
 	fp = new fstream(file_name, std::fstream::in | std::fstream::out | std::fstream::trunc);
 	first_file = -1;
 
+	validate();
 	SetTomName(_tomName);
 	SetOwner(_owner);
 	SetMaxSize(_maxSize);
@@ -51,9 +53,6 @@ void FileSystem::Compress(){
 
 
 void FileSystem::CreateFile(FileDescriptor* fd){
-	// Ýòó ôóíêöèÿ ïðàêòè÷åñêè íàïèñàíà, ò.ê. îíà íóæíà ìíå áûëà â õîäå ðàáîòû.
-	// Ñþäà íóæíî äîïèñàòü ïðîâåðêó, íå ñòàíåò ëè îáúåì ñèñòåìû ïîñëå äîáàâëåíèÿ ôàéëà
-	// ïðåâûøàòü ìàêñèìàëüíîå äîïóñòèìîå çíà÷åíèå, âîçìîæíî åù¸ ÷òî-òî.
 
 	char* type;
 	bool buzy = true;
@@ -63,7 +62,7 @@ void FileSystem::CreateFile(FileDescriptor* fd){
 
 	GetFilesCount();
 	if (filesCount == MAX_FILES_COUNT)
-		throw "Ïðåâûøåíî ìàêñèìàëüíîå êîëëè÷åñòâî ôàéëîâ";
+		throw "��������� ������������ ����������� ������";
 
 	FileIterator* fi = GetIterator();
 	int N = GetFilesCount();;
@@ -75,7 +74,7 @@ void FileSystem::CreateFile(FileDescriptor* fd){
 			FileDescriptor* fdtmp = fi->GetFileDescriptor();
 			if (strcmp(fdtmp->GetName(), fd->GetName()) == 0 
 				&& strcmp(fdtmp->GetType(), fd->GetType()) == 0)
-				throw "Данный файл уже создан.";
+				throw "������ ���� ��� ������.";
 		}
 	}
 
@@ -156,7 +155,7 @@ size_t FileSystem::GetFilesCount(){
 	fp->seekp(3 * LINE_SIZE, fp->beg);
 	filesCount = atol(read_line(fp));
 	if (filesCount > MAX_FILES_COUNT)
-		throw "Íåêîððåêòíîå êîëëè÷åñòâî ôàéëîâ â ñèñòåìå";
+		throw "��������� ������������ ����������� ������";
 	return filesCount;
 }
 
@@ -197,7 +196,6 @@ void FileSystem::set_first_file(int _first_file){
 }
 
 
-//Åñëè â êà÷åñòâå data ïåðåäàòü NULL,  òî ñòðîêà çàïëíÿåòñÿ ïðîáåëàìè
 
 void FileSystem::write_line(fstream* fp, char *data, size_t len){
 	char* spaces;
@@ -291,4 +289,15 @@ bool FileSystem::names_types(char *str){
 		}
 	}
 	return flag;
+}
+
+void FileSystem::validate(){
+	fp->seekg(0, fp->end);
+	size_t pos = fp->tellg();
+	if (pos % LINE_SIZE != 0)
+		throw "������������ ���� fs.txt.";
+	fp->seekg(0, fp->beg);
+	fp->seekp(0, fp->beg);
+	return;
+	
 }
