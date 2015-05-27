@@ -180,7 +180,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 	FileDescriptor *fd;
 	MemList ml;
 	unsigned int indx = 0, max_indx;
-	do
+	while (fi->HasNext())
 	{
 		fi->Next();
 		fd = fi->GetFileDescriptor();
@@ -196,7 +196,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 		{
 			for (iter = List.begin(); iter != List.end(); iter++)
 			{
-				if (ml.offset < (*iter).offset)
+				if ( (ml.offset < (*iter).offset) || ((ml.offset == (*iter).offset) && (ml.sz < (*iter).sz)) )
 				{
 					List.insert(iter, ml);
 					break;
@@ -208,7 +208,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 			}
 		}
 		++indx;
-	} while (fi->HasNext());
+	}
 	max_indx = indx - 1;
 	//вставляем пустой блок в начало, если нужно
 	size_t FD_END = START_OF_FILE_SPACE;
@@ -235,7 +235,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 		}
 	}
 	//=========================================================*/
-	out << "The whole data size before compressing: " << ( (*(std::prev(List.end()))).offset + (*(std::prev(List.end()))).sz - (*(List.begin())).offset) << std::endl;
+	out << "The whole data size before compressing: " << ((*(std::prev(List.end()))).offset + (*(std::prev(List.end()))).sz - (*(List.begin())).offset) << std::endl;
 	//сжатие===================================================
 	for (iter = List.begin(); iter != List.end(); iter++)
 	{
@@ -249,7 +249,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 				{
 					if ((*insIter).FDescrPtr)
 					{
-						if ( ((MaxAppr == List.end()) || (((*insIter).sz > (*MaxAppr).sz))) && ((*insIter).sz <= (*iter).sz) )
+						if ( ( (MaxAppr == List.end()) || ((*insIter).sz > (*MaxAppr).sz) ) && ((*insIter).sz <= (*iter).sz) && ((*insIter).sz > 0) )
 						{
 							MaxAppr = insIter;
 						}
@@ -328,7 +328,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 			}
 		}
 	}
-	//выводим список и записываем изменения в файл================
+	//записываем изменения в файл================
 	for (iter = List.begin(); iter != List.end(); iter++) { (*iter).FDescrPtr->SetOffset((*iter).offset); }//меняем смещение в дескрипторах
 	fi = fs->GetIterator();
 	for (indx = 0; indx <= max_indx; indx++)
@@ -349,7 +349,7 @@ void commands_ns::MkFile(FileSystem *fs, int argc, char *argv[], std::ostream& o
 		out << "Неверное количество параметров."<< std::endl;
 		return;
 	}
-	if (strlen(argv[0]) > 10)
+	if (strlen(argv[0]) > 20)
 	{
 		out << "Некорректные данные." << std::endl;
 		return;
@@ -357,7 +357,7 @@ void commands_ns::MkFile(FileSystem *fs, int argc, char *argv[], std::ostream& o
 	char *nt[2];
 	nt[0] = strtok(argv[0], ".");
 	nt[1] = strtok(NULL, " ,.-");
-	if (fs->names_types(nt[0]) == 1)
+	if ( (!nt[0]) || (!nt[1]) || (fs->names_types(nt[0]) == 1) )
 	{
 		out << "Некорректные данные."<< std::endl;
 		return;
@@ -389,7 +389,7 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 	char *nt[2];
 	nt[0] = strtok(argv[0], ".");
 	nt[1] = strtok(NULL, " ,.-");
-	if (fs->names_types(nt[0]) == 1)
+	if ( (!nt[0]) || (!nt[1]) || (fs->names_types(nt[0])) )
 	{
 		out << "Некорректные данные." << std::endl;
 		return;
@@ -398,7 +398,7 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 	FileIterator* prevfi = fs->GetIterator();
 	int j = 0;
 	int next_index;
-
+	int n = fs->GetFilesCount();
 	if (fs->GetFilesCount() != 0)
 	{
 		while (fi->HasNext())
@@ -412,6 +412,7 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 			{
 				if (j == 0){
 					fs->set_first_file(next_index);
+					fi->Delete();
 				} else {
 					prevfi->set_next(next_index);
 					fi->Delete();
@@ -636,138 +637,166 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 		out << "Неверное количество параметров." << std::endl;
 		return;
 	}
-
 	char *nt[2];
 	nt[0] = strtok(argv[0], ".");
 	nt[1] = strtok(NULL, " ,.-");
-	if (fs->names_types(nt[0]) == 1)
+	if ((!nt[0]) || (!nt[1]) || (fs->names_types(nt[0]) == 1))
 	{
 		out << "Некорректные данные." << std::endl;
 		return;
-	};
-
-
-	FileIterator* fi = fs->GetIterator();
-	int N = fs->GetFilesCount();
-
-	if (N != 0)
+	}
+	if (fs->GetFilesCount() <= 0)
 	{
+		out << "Файл не найден" << std::endl;
+		return;
+	}
+	if ((!argv[1]) || (strlen(argv[1]) <= 0))
+	{
+		out << "Информация для добавления не введена" << std::endl;
+		return;
+	}
+	int addSize = strlen(argv[1]);
+	int fileIndx = -1;
+	//формируем список блоков из дескрипторов по возрастанию смещения======
+	std::list < MemList> List;
+	std::list<MemList>::iterator iter;
+	std::list<MemList>::iterator fileToAdd;
+	FileIterator *fi = fs->GetIterator();
+	FileDescriptor *fd;
+	MemList ml;
+	unsigned int indx = 0, max_indx;
+	while (fi->HasNext())
+	{
+		fi->Next();
+		fd = fi->GetFileDescriptor();
+		if ((strcmp(fd->GetName(), nt[0]) == 0) && (strcmp(fd->GetType(), nt[1]) == 0))
+		{
+			fileIndx = indx;
+		}
+		ml.FDescrPtr = fd;
+		ml.offset = fd->GetOffset();
+		ml.sz = fd->GetSize();
+		ml.index = indx;
+		if (List.empty())
+		{
+			List.push_back(ml);
+			if (indx == fileIndx) {fileToAdd = List.begin();}
+		}
+		else
+		{
+			for (iter = List.begin(); iter != List.end(); iter++)
+			{
+				if ((ml.offset < (*iter).offset) || ((ml.offset == (*iter).offset) && (ml.sz < (*iter).sz)))
+				{
+					List.insert(iter, ml);
+					if (indx == fileIndx) { fileToAdd = std::prev(iter); }
+					break;
+				}
+			}
+			if (iter == List.end())
+			{
+				List.push_back(ml);
+				if (indx == fileIndx) { fileToAdd = std::prev(List.end()); }
+			}
+		}
+		++indx;
+	}
+	max_indx = indx - 1;
+	if (fileIndx==-1)
+	{
+		out << "Файл не найден" << std::endl;
+		return;
+	}
+	//вставляем пустой блок в начало, если нужно
+	if ((*(List.begin())).offset > START_OF_FILE_SPACE)
+	{
+		ml.offset = START_OF_FILE_SPACE;
+		ml.sz = (*(List.begin())).offset - START_OF_FILE_SPACE;
+		ml.FDescrPtr = NULL;
+		List.insert(List.begin(), ml);
+	}
+	//вставляем пустые блоки в список
+	for (iter = List.begin(); iter != List.end(); iter++)
+	{
+		if (std::next(iter) != List.end())
+		{
+			if ((*(std::next(iter))).offset != ((*iter).offset + (*iter).sz))
+			{
+				ml.offset = (*iter).offset + (*iter).sz;
+				ml.sz = (*(std::next(iter))).offset - ml.offset;
+				ml.FDescrPtr = NULL;
+				List.insert(std::next(iter), ml);
+				++iter;
+			}
+		}
+	}
+	//проверяем размер
+	size_t MaxSz = fs->GetMaxSize();
+	if (((*(std::prev(List.end()))).offset + (*(std::prev(List.end()))).sz) >= MaxSz)
+	{
+		out << "Нет свободного места" << std::endl;
+		return;
+	}
+	//меняем размер файла, в который добавляется информация
+	(*fileToAdd).sz += addSize;
+	(*fileToAdd).FDescrPtr->SetSize((*fileToAdd).sz);
+	if (std::next(fileToAdd) == List.end())//если файл последний в памяти - просто добавляем в размер
+	{
+		fi = fs->GetIterator();
+		int i = 0;
 		while (fi->HasNext())
 		{
 			fi->Next();
-			FileDescriptor* fd = fi->GetFileDescriptor();
-			size = (size + fd->GetSize());
-		};
-	};
-
-	size_t e = fs->GetMaxSize();
-	if ((e - size)  <= 0)
-	{
-		out << "Превышен максимальный объем." << std::endl;
-	};
-
-	fi = fs->GetIterator();
-
-	if (N != 0)
-	{
-		fi = fs->GetIterator();
-		int index = 1;
-		bool endreached = true;
-		int size_of_file = 0 ;
-
-		while (fi->HasNext()){
-			fi->Next();
-			FileDescriptor* fd = fi->GetFileDescriptor();
-			if (strcmp(fd->GetName(), nt[0]) == 0
-				&& strcmp(fd->GetType(), nt[1]) == 0){
-				size_of_file = fd->GetSize();
-				endreached = false;
+			if (i == (*fileToAdd).index)
+			{
+				fi->SetFileDescriptor((*fileToAdd).FDescrPtr);
 				break;
 			}
-			++index;
 		}
-
-		if (endreached){
-			out << "Файл не найден." << std::endl;
-			return;
-		}
-
-		FileDescriptor* fd;
-
-		if (size_of_file == 0)
+		out << "Информация добавлена" << std::endl;
+		return;
+	}
+	//если не последний - ищем подходящую "дырку"
+	bool isMoved = false;
+	for (iter = List.begin(); iter != List.end(); iter++)
+	{
+		if (((*iter).FDescrPtr == NULL) && ((*iter).sz >= (*fileToAdd).sz))
 		{
-			std::vector<int> space;
-
-			space.push_back(START_OF_FILE_SPACE);
-			space.push_back(fs->GetMaxSize());
-
-			FileIterator* iter = fs->GetIterator();
-
-			int i = 1;
-
-			int destoffset;
-			while (iter->HasNext()){
-				iter->Next();
-				fd = iter->GetFileDescriptor();
-
-				space.push_back(fd->GetOffset());
-
-				space.push_back(fd->GetOffset() + fd->GetSize());
-				delete fd;
-				++i;
+			MemList ml = (*fileToAdd);
+			List.erase(fileToAdd);
+			ml.offset = (*iter).offset;
+			(*iter).sz -= ml.sz;
+			(*iter).offset += ml.sz;
+			std::list<MemList>::iterator movedFile = List.insert(iter, ml);
+			(*movedFile).FDescrPtr->SetOffset((*movedFile).offset);
+			if ((*iter).sz <= 0)
+			{
+				List.erase(iter);
 			}
-
-			//сортируем вектор
-			std::sort(space.begin(), space.end());
-
-			//итератор по вектору
-			std::vector<int>::iterator it = space.begin();
-
-			//Тут будем хранить предыдущий оффсет
-			int prevOffset = *it;
-
-			++it;
-
-			i = 0;
-			for (; it != space.end(); ++it){
-
-				//Проверяем только четные значения i, т.к. там будут свободные места
-				if (i % 2 == 0){
-					if (*it - prevOffset >= strlen(argv[1])){
-						fi = fs->GetIterator();
-						i = 1;
-						destoffset = prevOffset;
-
-						while (fi->HasNext()){
-							fi->Next();
-							if (i == index){
-								fd = fi->GetFileDescriptor();
-								fd->SetSize(strlen(argv[1]));
-								fd->SetOffset(destoffset);
-								fi->SetFileDescriptor(fd);
-								out << "Информация добавлена." << std::endl;
-								return;
-							}
-							++i;
-						}
-					}
-				}
-
-				prevOffset = *it;
-				++i;
-			}
-			return;
-
-		} else {
-			fd = fi->GetFileDescriptor();
-			fd->SetSize(fd->GetSize() + strlen(argv[1]));
-			fi->SetFileDescriptor(fd);
-			out << "Информация добавлена." << std::endl;
-			return;
+			fileToAdd = movedFile;
+			isMoved = true;
+			break;
 		}
 	}
-
-	out << "Файл не найден." << std::endl;
+	//если нет подходящей дырки - сдвигаем все следующие блоки
+	if (!isMoved)
+	{
+		for (iter = std::next(fileToAdd); iter != List.end(); iter++)
+		{
+			(*iter).offset += addSize;
+		}
+	}
+	//меняем дескрипторы и записываем их в файл в нужном порядке
+	fi = fs->GetIterator();
+	for (indx = 0; indx <= max_indx; indx++)
+	{
+		for (iter = List.begin(); ((iter != List.end()) && ((*iter).index != indx)); iter++) {}
+		fi->Next();
+		(*iter).FDescrPtr->SetOffset((*iter).offset);
+		fi->SetFileDescriptor((*iter).FDescrPtr);
+	}
+	fi->Close();
+	out << "Информация добавлена" << std::endl;
 	return;
 }
 
