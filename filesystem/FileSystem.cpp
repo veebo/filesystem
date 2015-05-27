@@ -65,16 +65,17 @@ void FileSystem::CreateFile(FileDescriptor* fd){
 		throw "Превышено максимальное колличество файлов";
 
 	FileIterator* fi = GetIterator();
-	int N = GetFilesCount();;
+	int N = GetFilesCount();
 	if (N != 0)
 	{
 		while (fi->HasNext())
 		{
 			fi->Next();
 			FileDescriptor* fdtmp = fi->GetFileDescriptor();
-			if (strcmp(fdtmp->GetName(), fd->GetName()) == 0 
-				&& strcmp(fdtmp->GetType(), fd->GetType()) == 0)
-				throw "Данный файл уже создан.";
+			
+			if (strcmpi(fdtmp->GetName(), fd->GetName()) == 0 
+				&& strcmpi(fdtmp->GetType(), fd->GetType()) == 0)
+				throw "Файл с указанным именем уже существует";
 		}
 	}
 
@@ -194,8 +195,6 @@ void FileSystem::set_first_file(int _first_file){
 	fp->seekp(4 * LINE_SIZE, fp->beg);
 	write_line(fp, first_file);
 }
-
-
 
 void FileSystem::write_line(fstream* fp, char *data, size_t len){
 	char* spaces;

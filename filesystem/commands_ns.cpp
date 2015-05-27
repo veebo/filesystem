@@ -347,26 +347,27 @@ void commands_ns::MkFile(FileSystem *fs, int argc, char *argv[], std::ostream& o
 {
 	if (argc != 1)
 	{
-		out << "Неверное количество параметров."<< std::endl;
+		out << "Неправильное количество параметров"<< std::endl;
 		return;
 	}
-	if (strlen(argv[0]) > 20)
+	if (strlen(argv[0]) > 41)
 	{
-		out << "Некорректные данные." << std::endl;
+		out << "Введены некорректные данные" << std::endl;
 		return;
 	};
 	char *nt[2];
 	nt[0] = strtok(argv[0], ".");
-	nt[1] = strtok(NULL, " ,.-!");
+	nt[1] = strtok(NULL, "");
 	char *s = strtok(NULL, ".,-!");
 	if ((!nt[0]) || (!nt[1]) || (s))
 	{
-		out << "Некорректные данные" << std::endl;
+		out << "Введены некорректные данные" << std::endl;
 		return;
 	}
-	if (fs->names_types(nt[0]))
+
+	if (fs->names_types(nt[0])||fs->names_types(nt[1]))
 	{
-		out << "Некорректные данные" << std::endl;
+		out << "Введены некорректные данные" << std::endl;
 		return;
 	}
 	FileDescriptor* fd = new FileDescriptor();
@@ -385,26 +386,26 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 {
 	if (argc != 1)
 	{
-		out << "Неверное количество параметров." << std::endl;
+		out << "Неправильное количество параметров" << std::endl;
 		return;
 	}
-	if (strlen(argv[0]) > 20)
+	if (strlen(argv[0]) > 41)
 	{
-		out << "Некорректные данные." << std::endl;
+		out << "Введены некорректные данные" << std::endl;
 		return;
 	}
 	char *nt[2];
 	nt[0] = strtok(argv[0], ".");
-	nt[1] = strtok(NULL, " ,.-!");
+	nt[1] = strtok(NULL, "");
 	char *s = strtok(NULL, ".,-!");
 	if ( (!nt[0]) || (!nt[1]) || (s) )
 	{
-		out << "Некорректные данные" << std::endl;
+		out << "Введены некорректные данные" << std::endl;
 		return;
 	}
-	if (fs->names_types(nt[0]))
+	if (fs->names_types(nt[0])||fs->names_types(nt[1]))
 	{
-		out << "Некорректные данные" << std::endl;
+		out << "Введены некорректные данные" << std::endl;
 		return;
 	}
 	FileIterator* fi = fs->GetIterator();
@@ -420,8 +421,8 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 			FileDescriptor* fd = fi->GetFileDescriptor();
 			next_index = fi->GetNextIndex();
 
-			if (strcmp(fd->GetName(), nt[0]) == 0
-				&& strcmp(fd->GetType(), nt[1]) == 0)
+			if (strcmpi(fd->GetName(), nt[0]) == 0
+				&& strcmpi(fd->GetType(), nt[1]) == 0)
 			{
 				if (j == 0)
 				{
@@ -438,6 +439,7 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 			prevfi->Next();
 			j++;
 		}
+		out << "Файл с указанным именем не существует" << std::endl;
 	}
 	else
 		out << "Файлов в системе не обнаружено." << std::endl;
@@ -502,7 +504,7 @@ void commands_ns::RenFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 		{
 			fi->Next();
 			FileDescriptor* fd = fi->GetFileDescriptor();
-			if (strcmp(fd->GetName(), arg_name) == 0 && strcmp(fd->GetType(), arg_type) == 0)
+			if (strcmpi(fd->GetName(), arg_name) == 0 && strcmpi(fd->GetType(), arg_type) == 0)
 			{
 				if (strcmp(arg_name,argv[1])==0){
 					out << "Изменение имени прошло успешно" << std::endl;
@@ -515,7 +517,7 @@ void commands_ns::RenFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 				{
 					fi2->Next();
 					FileDescriptor* fd2 = fi2->GetFileDescriptor();
-					if (strcmp(fd2->GetName(), argv[1]) == 0 && strcmp(fd2->GetType(), arg_type) == 0)
+					if (strcmpi(fd2->GetName(), argv[1]) == 0 && strcmpi(fd2->GetType(), arg_type) == 0)
 						{
 							out << "Файл с таким именем и типом уже существует" << std::endl;
 							delete[] arg_name;
@@ -601,7 +603,7 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
 		{
 			fi->Next();
 			FileDescriptor* fd = fi->GetFileDescriptor();
-			if (strcmp(fd->GetName(), arg_name) == 0 && strcmp(fd->GetType(), arg_type) == 0)
+			if (strcmpi(fd->GetName(), arg_name) == 0 && strcmpi(fd->GetType(), arg_type) == 0)
 			{
 				if (strcmp(arg_type,argv[1])==0){
 					out << "Изменение имени прошло успешно" << std::endl;
@@ -614,7 +616,7 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
 				{
 					fi2->Next();
 					FileDescriptor* fd2 = fi2->GetFileDescriptor();
-					if (strcmp(fd2->GetName(), arg_name) == 0 && strcmp(fd2->GetType(), argv[1]) == 0)
+					if (strcmpi(fd2->GetName(), arg_name) == 0 && strcmpi(fd2->GetType(), argv[1]) == 0)
 						{
 							out << "Файл с таким именем и типом уже существует" << std::endl;
 							delete[] arg_name;
@@ -642,28 +644,27 @@ void commands_ns::ChType(FileSystem *fs, int argc, char *argv[], std::ostream& o
  	delete[] arg_type;
 }
 
-
-
 void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream& out)
 {
 	size_t size = 0;
 	if (argc != 2)
 	{
-		out << "Неверное количество параметров." << std::endl;
+		out << "Неправильное количество параметров" << std::endl;
 		return;
 	}
 	char *nt[2];
 	nt[0] = strtok(argv[0], ".");
-	nt[1] = strtok(NULL, " ,.-!");
+	nt[1] = strtok(NULL, "");
 	char *s = strtok(NULL, ".,-!");
 	if ((!nt[0]) || (!nt[1]) || (s))
 	{
-		out << "Некорректные данные" << std::endl;
+		out << "Введены некорректные данные" << std::endl;
 		return;
 	}
-	if (fs->names_types(nt[0]))
+
+	if (fs->names_types(nt[0])||fs->names_types(nt[1]))
 	{
-		out << "Файл не найден" << std::endl;
+		out << "Введены некорректные данные" << std::endl;
 		return;
 	}
 	if (fs->GetFilesCount() <= 0)
@@ -690,7 +691,7 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 	{
 		fi->Next();
 		fd = fi->GetFileDescriptor();
-		if ((strcmp(fd->GetName(), nt[0]) == 0) && (strcmp(fd->GetType(), nt[1]) == 0))
+		if ((strcmpi(fd->GetName(), nt[0]) == 0) && (strcmpi(fd->GetType(), nt[1]) == 0))
 		{
 			fileIndx = indx;
 		}
@@ -725,7 +726,7 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 	max_indx = indx - 1;
 	if (fileIndx==-1)
 	{
-		out << "Файл не найден" << std::endl;
+		out << "Файл с указанным именем не существует" << std::endl;
 		return;
 	}
 	//вставляем пустой блок в начало, если нужно
@@ -754,9 +755,9 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 	}
 	//проверяем размер
 	size_t MaxSz = fs->GetMaxSize();
-	if (((*(std::prev(List.end()))).offset + (*(std::prev(List.end()))).sz) >= MaxSz)
+	if (((*(std::prev(List.end()))).offset + (*(std::prev(List.end()))).sz+addSize) > MaxSz)
 	{
-		out << "Нет свободного места" << std::endl;
+		out << "Недостаточно места для добавления введенной информации" << std::endl;
 		return;
 	}
 	//меняем размер файла, в который добавляется информация
