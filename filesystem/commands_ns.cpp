@@ -357,10 +357,16 @@ void commands_ns::MkFile(FileSystem *fs, int argc, char *argv[], std::ostream& o
 	};
 	char *nt[2];
 	nt[0] = strtok(argv[0], ".");
-	nt[1] = strtok(NULL, " ,.-");
-	if ( (!nt[0]) || (!nt[1]) || (fs->names_types(nt[0]) == 1) )
+	nt[1] = strtok(NULL, " ,.-!");
+	char *s = strtok(NULL, ".,-!");
+	if ((!nt[0]) || (!nt[1]) || (s))
 	{
-		out << "Некорректные данные."<< std::endl;
+		out << "Некорректные данные" << std::endl;
+		return;
+	}
+	if (fs->names_types(nt[0]))
+	{
+		out << "Некорректные данные" << std::endl;
 		return;
 	}
 	FileDescriptor* fd = new FileDescriptor();
@@ -386,13 +392,19 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 	{
 		out << "Некорректные данные." << std::endl;
 		return;
-	};
+	}
 	char *nt[2];
 	nt[0] = strtok(argv[0], ".");
-	nt[1] = strtok(NULL, " ,.-");
-	if ( (!nt[0]) || (!nt[1]) || (fs->names_types(nt[0])) )
+	nt[1] = strtok(NULL, " ,.-!");
+	char *s = strtok(NULL, ".,-!");
+	if ( (!nt[0]) || (!nt[1]) || (s) )
 	{
-		out << "Некорректные данные." << std::endl;
+		out << "Некорректные данные" << std::endl;
+		return;
+	}
+	if (fs->names_types(nt[0]))
+	{
+		out << "Некорректные данные" << std::endl;
 		return;
 	}
 	FileIterator* fi = fs->GetIterator();
@@ -411,15 +423,17 @@ void commands_ns::DelFile(FileSystem *fs, int argc, char *argv[], std::ostream& 
 			if (strcmp(fd->GetName(), nt[0]) == 0
 				&& strcmp(fd->GetType(), nt[1]) == 0)
 			{
-				if (j == 0){
+				if (j == 0)
+				{
 					fs->set_first_file(next_index);
-					fi->Delete();
-				} else {
-					prevfi->set_next(next_index);
-					fi->Delete();
-					out << "Файл удален." << std::endl;
-					return;
 				}
+				else
+				{
+					prevfi->set_next(next_index);
+				}
+				fi->Delete();
+				out << "Файл удален." << std::endl;
+				return;
 			}
 			prevfi->Next();
 			j++;
@@ -640,10 +654,16 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 	}
 	char *nt[2];
 	nt[0] = strtok(argv[0], ".");
-	nt[1] = strtok(NULL, " ,.-");
-	if ((!nt[0]) || (!nt[1]) || (fs->names_types(nt[0]) == 1))
+	nt[1] = strtok(NULL, " ,.-!");
+	char *s = strtok(NULL, ".,-!");
+	if ((!nt[0]) || (!nt[1]) || (s))
 	{
-		out << "Некорректные данные." << std::endl;
+		out << "Некорректные данные" << std::endl;
+		return;
+	}
+	if (fs->names_types(nt[0]))
+	{
+		out << "Файл не найден" << std::endl;
 		return;
 	}
 	if (fs->GetFilesCount() <= 0)
