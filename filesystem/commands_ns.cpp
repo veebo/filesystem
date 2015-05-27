@@ -190,7 +190,7 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 		ml.index = indx;
 		if (List.empty())
 		{
-			List.push_back(ml);
+			List.push_front(ml);
 		}
 		else
 		{
@@ -211,13 +211,14 @@ void commands_ns::Cmprs(FileSystem *fs, int argc, char *argv[], std::ostream& ou
 	}
 	max_indx = indx - 1;
 	//вставляем пустой блок в начало, если нужно
-	size_t FD_END = START_OF_FILE_SPACE;
+	size_t FD_END = 0;//START_OF_FILE_SPACE;
 	if ((*(List.begin())).offset > FD_END)
 	{
 		ml.offset = FD_END;
 		ml.sz = (*(List.begin())).offset - FD_END;
 		ml.FDescrPtr = NULL;
-		List.insert(List.begin(), ml);
+		//List.insert(List.begin(), ml);
+		List.push_front(ml);
 	}
 	//вставляем пустые блоки в список
 	for (iter = List.begin(); iter != List.end(); iter++)
@@ -708,10 +709,11 @@ void commands_ns::AddToFile(FileSystem *fs, int argc, char *argv[], std::ostream
 		return;
 	}
 	//вставляем пустой блок в начало, если нужно
-	if ((*(List.begin())).offset > START_OF_FILE_SPACE)
+	size_t FD_END = 0;
+	if ((*(List.begin())).offset > FD_END)
 	{
-		ml.offset = START_OF_FILE_SPACE;
-		ml.sz = (*(List.begin())).offset - START_OF_FILE_SPACE;
+		ml.offset = FD_END;
+		ml.sz = (*(List.begin())).offset - FD_END;
 		ml.FDescrPtr = NULL;
 		List.insert(List.begin(), ml);
 	}
